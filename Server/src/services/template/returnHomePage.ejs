@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antique Bakery Cafe HTML Template by Tooplate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600&family=Oswald:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="http://127.0.0.1:3000/css/all.min.css"> <!-- fontawesome -->
+    <!-- <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="http://127.0.0.1:3000/css/tailwind.css">
+    <link rel="stylesheet" href="http://127.0.0.1:3000/css/tooplate-antique-cafe.css"> 
+    
+<!--
+
+Tooplate 2126 Antique Cafe
+
+https://www.tooplate.com/view/2126-antique-cafe
+
+-->
+</head>
+<body>    
+    <!-- Intro -->
+    <div id="intro" class="parallax-window" data-parallax="scroll" data-image-src="http://127.0.0.1:3000/img/antique-cafe-bg-01.jpg">
+        <nav id="tm-nav" class="fixed w-full">
+            <div class="tm-container mx-auto px-2 md:py-6 text-right">
+                <button class="md:hidden py-2 px-2" id="menu-toggle"><i class="fas fa-2x fa-bars tm-text-gold"></i></button>
+                <ul class="mb-3 md:mb-0 text-2xl font-normal flex justify-end flex-col md:flex-row">
+                    <li class="inline-block mb-4 mx-4"><a href="http://localhost:5173/" onclick="window.location.href=`http://localhost:5173/`" class=" py-1 md:py-3 px-4">Home</a></li>
+                    <!-- <li class="inline-block mb-4 mx-4"><a href="#menu" class="tm-text-gold py-1 md:py-3 px-4">Menu</a></li>
+                    <li class="inline-block mb-4 mx-4"><a href="#about" class="tm-text-gold py-1 md:py-3 px-4">About</a></li>
+                    <li class="inline-block mb-4 mx-4"><a href="#contact" class="tm-text-gold py-1 md:py-3 px-4">Contact</a></li> -->
+                </ul>
+            </div>            
+        </nav>
+        <div class="container mx-auto px-2 tm-intro-width">
+            <div class="sm:pb-60 sm:pt-48 py-20">
+                <div class="bg-black bg-opacity-50 p-12 mb-5 text-center">
+                    <h1 class="text-white text-5xl tm-logo-font mb-5"><%= message %></h1>
+                    <button onclick="window.location.href=`http://localhost:5173/`"
+                    style="background-color: aliceblue;width: 200px;height: 100px;font-weight: bold;font-size: 25px;"
+                    
+                    >Back To Home Page</button>
+                </div>    
+            </div>
+        </div>        
+    </div>
+
+
+
+    <script src="http://127.0.0.1:3000/js/jquery-3.6.0.min.js"></script>
+    <script src="http://127.0.0.1:3000/js/parallax.min.js"></script>
+    <script src="http://127.0.0.1:3000/js/jquery.singlePageNav.min.js"></script>
+    <script>
+
+        function checkAndShowHideMenu() {
+            if(window.innerWidth < 768) {
+                $('#tm-nav ul').addClass('hidden');                
+            } else {
+                $('#tm-nav ul').removeClass('hidden');
+            }
+        }
+
+        $(function(){
+            var tmNav = $('#tm-nav');
+            tmNav.singlePageNav();
+
+            checkAndShowHideMenu();
+            window.addEventListener('resize', checkAndShowHideMenu);
+
+            $('#menu-toggle').click(function(){
+                $('#tm-nav ul').toggleClass('hidden');
+            });
+
+            $('#tm-nav ul li').click(function(){
+                if(window.innerWidth < 768) {
+                    $('#tm-nav ul').addClass('hidden');
+                }                
+            });
+
+            $(document).scroll(function() {
+                var distanceFromTop = $(document).scrollTop();
+
+                if(distanceFromTop > 100) {
+                    tmNav.addClass('scroll');
+                } else {
+                    tmNav.removeClass('scroll');
+                }
+            });
+            
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
