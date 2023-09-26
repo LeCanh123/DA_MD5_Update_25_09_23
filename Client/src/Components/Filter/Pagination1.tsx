@@ -27,16 +27,21 @@ const Pagination1 = () => {
   const [order, setOrder] = useState(intialOrder || "");
 
   const initialCategory = searchParams.getAll("category");
+  
   const [category, setCategory] = useState(initialCategory || []);
 
 
   const handlePage = (val:any) => {
     setPage((prev) => prev + val);
-    navigate(`/men?page=${ page + val}`)
+  const [category1, setCategory] = useState(initialCategory || []);
+
+    const categoryParams = category1.map((cat:any) => `category=${cat}`).join("&");
+    
+    navigate(`/men?page=${ page + val}&${categoryParams}`)
   };
 
   useEffect(() => {
-    let params = {
+    let params = { 
       order,
       page,
       category,
@@ -55,7 +60,7 @@ const Pagination1 = () => {
           <span />
           <Button>{page}</Button> <span />
           <Button
-            isDisabled={page === Math.ceil(total / 1)}
+            isDisabled={page === Math.ceil(total / import.meta.env.VITE_ITEM_PER_PAGE)}
             onClick={() => handlePage(+1)}
           >
             Next

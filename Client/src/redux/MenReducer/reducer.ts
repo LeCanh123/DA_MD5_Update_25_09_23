@@ -28,7 +28,8 @@ const menSlice = createSlice({
       state.search=payload.data;
     },
     getProductByCategorysl: (state, { payload }) => {//v
-      state.men = payload;
+      state.men = payload.data;
+      state.total = payload.total;
       state.search=payload
     },
     sortByPriceSuccess: (state, { payload }) => {
@@ -42,7 +43,7 @@ const menSlice = createSlice({
     },
     searchProductsl: (state, { payload }) => {//v
       if(payload.search=="true"){
-        state.men=state.search.filter((e:any)=>{console.log(e);
+        state.men=state.search.filter((e:any)=>{
           return e.title?.toLowerCase().includes(payload.key.toLowerCase())})
       }else{
         state.men=state.search
@@ -82,7 +83,6 @@ export const fetchMensData =(paramObj: any, dispatch: Dispatch<AnyAction>) => {
   // dispatch(getMenRequestPending());
   try {
     const res:any = await userProduct.getMenproductByPage(paramObj);
-    console.log("fetchMensData",res.data);
     
     dispatch(getMenRequestSuccess(res));
     
@@ -99,10 +99,9 @@ export const getProductByCategory =(paramObj: any, dispatch: Dispatch<AnyAction>
   async function  getProductByCategory1() {
   // dispatch(getMenRequestPending());
   try {
-    const res = await userProduct.getProductByCategory(paramObj.token,paramObj.listCategory);
-    console.log("getProductByCategory",res.data.data);
+    const res = await userProduct.getProductByCategory(paramObj.token,paramObj.listCategory,paramObj.skip,paramObj.take);
     
-    dispatch(getProductByCategorysl(res.data.data));
+    dispatch(getProductByCategorysl(res.data));
     
   } catch (error) {
     dispatch(getMenRequestFailure());

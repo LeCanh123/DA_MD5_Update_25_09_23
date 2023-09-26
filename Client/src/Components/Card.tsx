@@ -96,20 +96,21 @@ import { getcart1 } from "../redux/cartReducer/reducer";
     >
       {/* <Link to={`/${"type"}/${props.data.id}`} > */}
         <Image borderRadius={"20px"} style={{height:"300px",width:"250px",margin:"15px",marginLeft:"15%"}}  
-        src={props?.data?.productimage[0]?.image}
+        // src={props?.data?.productimage[0]?.image}
+        src={props?.data?.productimage?.[0]?.image || props?.data}
         >
         
         </Image>
         <Flex gap={"5px"} textAlign={"center"}>
           <Heading paddingTop={"8px"} size="md">
-            ${props.data?.price}
+            ${props?.data?.price}
           </Heading>
           <Text as="del" fontSize={"13px"} paddingTop={"10px"}>
-          ${props.data?.actualprice}
+          ${props?.data?.actualprice}
           </Text>
         </Flex>
         <Text paddingTop={"3px"} fontSize={"14px"}>
-          {props.data?.title}{" "}
+          {props?.data?.title}{" "}
         </Text>
       {/* </Link> */}
 

@@ -14,8 +14,6 @@ export class CategoryController {
 //user
 @Post("usergetcategory")
 async userGetCategory(@Body() token) {
-  console.log("vào get all category",token);
-  
   let getCategoryResult=await this.categoryService.userGetCategory();
   return getCategoryResult
 }
@@ -30,7 +28,6 @@ async userGetCategory(@Body() token) {
   //admin
   @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
-    console.log("vào Controller('category')");
     
     let createCategoryResult= await this.categoryService.create(createCategoryDto);
     console.log(createCategoryResult);
@@ -40,7 +37,6 @@ async userGetCategory(@Body() token) {
 
   @Post("getall")
   async findAll(@Body() token) {
-    console.log("vào get all category",token);
     
     let findCategoryResult=await this.categoryService.findAll(token.token);
     return findCategoryResult

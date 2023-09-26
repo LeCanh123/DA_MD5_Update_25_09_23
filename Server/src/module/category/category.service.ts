@@ -62,7 +62,6 @@ export class CategoryService {
       }
    
       const categorys=await this.categoryRepository.save(categoryData);
-      console.log("categorys",categorys);
       
       return {
         status: true,

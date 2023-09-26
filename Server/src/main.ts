@@ -16,7 +16,7 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: ["1"]
   });
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api'); 
  
   const config = new DocumentBuilder()
     .setTitle('All Apis')

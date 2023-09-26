@@ -38,13 +38,13 @@ export class ProductsController {
 
    
   }
-  @Get("findbypage")
-  findByPage(@Query('skip', ParseIntPipe) skip: number, @Query('take', ParseIntPipe) take: number) {
-    console.log("vào findByPage");
+  @Post("findbypage")
+  findByPage(@Body() data,@Query('skip', ParseIntPipe) skip: number, @Query('take', ParseIntPipe) take: number,) {
+    console.log("vào findByPage",data);
     
     try{
         if(take){
-          return this.productsService.findByPage(skip,take);
+          return this.productsService.findByPage(skip,take,data.sortby);
           
         }
         else{

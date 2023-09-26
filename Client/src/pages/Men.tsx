@@ -26,16 +26,21 @@ export const Men = () => {
   const intialOrder = searchParams.get("order");
   const initialCategory = searchParams.getAll("category");
   const intialPage = searchParams.get("page");
-  console.log(intialPage);
   
 
   
   useEffect(()=> {
+    console.log("vào đây ròi searchParams");
+    
     let sortProduct=sortbyprice({genderType:"men",sortType:intialOrder},dispatch);
     let getcategory1:any=getCategory({token:localStorage.getItem("loginToken1")},dispatch)
+    console.log(initialCategory.length,"initialCategory.length");
+    
     if(initialCategory.length!=0){
       let getProductByCategory2=getProductByCategory({token:localStorage.getItem("loginToken1"),
-        listCategory:initialCategory
+        listCategory:initialCategory,
+        skip:0,
+        take:import.meta.env.VITE_ITEM_PER_PAGE
         },dispatch)
     }else{
       // let menproduct=fetchMensData("",dispatch);
@@ -48,7 +53,7 @@ export const Men = () => {
 //lấy data men
   const dispatch = useDispatch();
   useEffect(()=> {
-    let menproduct=fetchMensData({skip:0,take:1},dispatch);
+    let menproduct=fetchMensData({skip:0,take:import.meta.env.VITE_ITEM_PER_PAGE},dispatch);
     // getcart1(localStorage.getItem("loginToken1"),dispatch);
   }, []);
   const { men } = useSelector((store:any) => {
@@ -56,20 +61,35 @@ export const Men = () => {
   });
 
 //phân trang
-  const itemsPerPage = 1;
+  const itemsPerPage = import.meta.env.VITE_ITEM_PER_PAGE;
   const currentPage = parseInt(searchParams.get('page')) || 1;
   // let getPaginatedProducts:any="";
 
 
   useEffect(()=>{
-console.log("vong lap");
+    console.log("vào đây ròi currentPage");
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    console.log("startIndex",startIndex);
-    console.log("endIndex",endIndex);
+    //nếu không có category
+    // console.log("initialCategory.length",initialCategory.length);
+    const initialCategory1 = searchParams.getAll("category");
+    const intialOrder1 = searchParams.get("order");
     
-    let menproduct= fetchMensData({skip:startIndex,take:endIndex},dispatch);
+    if(initialCategory1.length!=0){
+      
+      let getProductByCategory2=getProductByCategory({token:localStorage.getItem("loginToken1"),
+      listCategory:initialCategory,
+      skip:startIndex,
+      take:import.meta.env.VITE_ITEM_PER_PAGE,
+      sortby:intialOrder1
+      },dispatch)
+    // let menproduct= fetchMensData({skip:startIndex,take:import.meta.env.VITE_ITEM_PER_PAGE},dispatch);
+
+    }else{
+      let menproduct= fetchMensData({skip:startIndex,take:import.meta.env.VITE_ITEM_PER_PAGE,sortby:intialOrder1},dispatch);
+
+    }
 
   },[currentPage])
 
@@ -92,7 +112,6 @@ console.log("vong lap");
 
 let getPaginatedProducts =men
 
-console.log("getPaginatedProducts",getPaginatedProducts);
 
   return (
     <div>

@@ -23,6 +23,7 @@ const cartSlice = createSlice({
         const res = await userCart.getCart(token);
         dispatch(getcart(res.data));
       } catch (error) {
+        dispatch(getcart([]));
       }
     };
     getcart2();

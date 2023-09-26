@@ -45,142 +45,6 @@ export const Cart = () => {
   const dispatch = useDispatch();
   let [islogin,setIsLogin]=useState(false)
 
-
-//   let { isAuth, afterLoginUser } = useSelector((state) => state.AuthReducer);
-//   let [checkItem,setCheckItem]=useState("")
-//   const navigate = useNavigate();
-//   const toast = useToast();
-//   const dispatch = useDispatch();
-//   const { cartItems } = useSelector((store) => {
-//     return store.cartReducer
-//   })
-
-
-// console.log(cartItems,"cartItems");
-
-//   const cartItems1=useSelector((store) => {
-//     return store.cartReducer
-//   })
-
-
-
-
-//   useEffect(async()=>{
-//     let usercart=await apis.getcart(localStorage.getItem("loginToken1"))
-//     console.log("usercart",usercart);
-//     if(usercart.data?.data?.length!=0){
-//       dispatch(getcart(usercart.data.data));
-//     }
-//   },[])
-
- 
-//   let saved = 0;
-//   const getData = () => {
-//     axios
-//       .get(process.env.REACT_APP_HOST+`cart1`)
-//       .then((res) => {
-//         // dispatch(addToCart1(res.data));
-//         res.data.forEach(element => {
-//           if(element.id==afterLoginUser.email){
-//             dispatch(addToCart(element.product));
-//           }
-//         });;
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   };
-
-
-
-
-//   const handleDelete = async(id) => {
-//     // localStorage.getItem("loginToken1")
-//     // dispatch(handleRemove(cartItems,e,afterLoginUser.email));
-//     let deleteproduct1=await apis.deleteproduct(localStorage.getItem("loginToken1"),id)
-//     console.log("deleteproduct1",deleteproduct1);
-// if(deleteproduct1.data.status==true){
-//   let usercart=await apis.getcart(localStorage.getItem("loginToken1"))
-//   console.log("usercart",usercart);
-//   if(usercart.data?.data?.length!=0){
-//     dispatch(getcart(usercart.data.data));
-//   }
-//   toast({
-//     title: "Removed from cart",
-//     description: "Deleted from Cart",
-//     status: "success",
-//     position: "top",
-//     duration: 1000,
-//     isClosable: true,
-//   });
-// }else{
-//   window.location.href="http://localhost:3000/"
-// }
-
-
-//   };
-
-//   const handleINC = async(token,id, type) => {
-// if(token){
-// let increaseproduct=await apis.increaseproduct({token,id,type})
-// console.log("increaseproduct",increaseproduct);
-// if(increaseproduct.status==200){
-//   // window.location.href="http://localhost:3000/cart"
-//   // setCheckItem(Date.now())
-//   let usercart=await apis.getcart(localStorage.getItem("loginToken1"))
-//   console.log("usercart",usercart);
-//   if(usercart.data?.data?.length!=0){
-//     dispatch(getcart(usercart.data.data));
-//   }
-
-  
-// }else{
-//   toast({
-//     title: "Lỗi",
-//     description: "Err",
-//     status: "error",
-//     position: "top",
-//     duration: 1000,
-//     isClosable: true,
-//   });
-// }
-
-// }else{
-//   toast({
-//     title: "Chưa đăng nhập",
-//     description: "Err",
-//     status: "error",
-//     position: "top",
-//     duration: 1000,
-//     isClosable: true,
-//   });
-// }
-
-//   };
-
-//   const handleDEC = (id, VAL) => {
-//     let newCartItem=cartItems.map((item,ind)=>{
-// if(ind!=VAL){
-//   return item
-// }else{
-//   return {...item,quantity:item.quantity-1}
-// }
-//     })
-//     axios
-//       .put(process.env.REACT_APP_HOST+`cart1/`+afterLoginUser.email, {
-//        id:afterLoginUser.email,product:[...newCartItem]
-//       })
-//       .then((res) => {
-//         dispatch(incrementQuantity(res.data));
-//         // getData();
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   };
-
-
-
   const { cartItems } = useSelector((store:any) => {
     return store.cartReducer;
   });
@@ -189,7 +53,7 @@ export const Cart = () => {
   const getTotalPrice = () => {
     return cartItems.reduce((total:any, e:any) => {
     console.log(e.quantity);
-      return total + e.products.price * e.quantity}, 0);
+      return total + e.products?.price * e.quantity}, 0);
   };
 
 
@@ -300,7 +164,7 @@ let saved:any =0;
               </Tr>
             </Thead>
 
-            {cartItems.length === 0 ? (
+            {cartItems?.length === 0 ? (
               <Heading
                 padding={"100px"}
                 alignItems={"center"}
@@ -315,8 +179,8 @@ let saved:any =0;
                   {
                     saved =
                       saved +
-                      (Math.floor(e.products.actualprice) -
-                        Math.floor(e.products.price )) *
+                      (Math.floor(e.products?.actualprice) -
+                        Math.floor(e.products?.price )) *
                         e.quantity;
                   }
                   return (
@@ -330,21 +194,21 @@ let saved:any =0;
                         <Image
                           width={"100px"}
                           height={"100px"}
-                          src={e.products.productimage[0]?.image}
+                          src={e.products?.productimage?.[0]?.image}
                           alt="Dan Abramov"
                         />
                         {e.brand}
                         <br></br>
-                        {e.products.title}
+                        {e.products?.title}
                       </Td>
                       <Td>
                         <Text>Original Price</Text>
                         <span style={{textDecoration:"line-through"}}>
-                          $ {Math.floor(e.products.actualprice)}
+                          $ {Math.floor(e.products?.actualprice)}
                         </span>
                         <br></br>
                         <Text>Discounted Price</Text>
-                        $ {Math.floor(( e.products.price))}
+                        $ {Math.floor(( e.products?.price))}
                         <br></br>
                       </Td>
                       <Td>
@@ -352,7 +216,7 @@ let saved:any =0;
                           isDisabled={e.quantity === 1}
                           variant={"outline"}
                           m={"2px"}
-                          onClick={() => handleChangeQuantity(e.products.id, "decrease")}
+                          onClick={() => handleChangeQuantity(e.products?.id, "decrease")}
                         >
                           -
                         </Button>
@@ -362,14 +226,14 @@ let saved:any =0;
                         <Button
                           variant={"outline"}
                           m={"2px"}
-                          onClick={() => handleChangeQuantity(e.products.id, "increase")}
+                          onClick={() => handleChangeQuantity(e.products?.id, "increase")}
                         >
                           +
                         </Button>
                       </Td>
                       <Td>
                         ${" "}
-                        {Math.floor(e.products.price*
+                        {Math.floor(e.products?.price*
                           e.quantity)}
                       </Td>
                       <Td>
@@ -379,7 +243,7 @@ let saved:any =0;
                       <Td>
                         {" "}
                         ${" "}
-                        {Math.floor(e.products.actualprice - e.products.price)
+                        {Math.floor(e.products?.actualprice - e.products?.price)
                          * e.quantity}
                       </Td>
                     </Tr>
