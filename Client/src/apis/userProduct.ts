@@ -24,7 +24,7 @@ export default {
     getMenproductByPage:async (data:any)=> {
  
       return axios.post(import.meta.env.VITE_SERVER_HOST+`api/v1/products/findbypage?skip=${Number(data.skip)}&take=${Number(data.take)}`,
-      {sortby:data.sortby})
+      {sortby:data.sortby,search:data.search})
         .then(res => {
           // return res
           return {data:res.data.data,
@@ -59,8 +59,9 @@ export default {
         }
           );
     },
-    getProductByCategory:async (token:any,category:any,skip:any,take:any,sortby:any)=> {
-      return axios.post(import.meta.env.VITE_SERVER_HOST+`api/v1/products/getproductbycategory`,{token,listCategory:category,skip,take,sortby})
+    getProductByCategory:async (token:any,category:any,skip:any,take:any,sortby:any,search:any)=> {
+      return axios.post(import.meta.env.VITE_SERVER_HOST+`api/v1/products/getproductbycategory`,{token,listCategory:category,
+        skip,take,sortby,search})
         .then(res => {
           return res
         })

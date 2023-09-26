@@ -44,7 +44,7 @@ export class ProductsController {
     
     try{
         if(take){
-          return this.productsService.findByPage(skip,take,data.sortby);
+          return this.productsService.findByPage(skip,take,data.sortby,data.search);
           
         }
         else{

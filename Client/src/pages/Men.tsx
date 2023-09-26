@@ -55,7 +55,7 @@ export const Men = () => {
     if(initialCategory1.length!=0){
       const itemsPerPage1 = import.meta.env.VITE_ITEM_PER_PAGE;
       const currentPage1 = parseInt(searchParams.get('page')) || 1;
-      const startIndex1 = (currentPage1 - 1) * itemsPerPage;
+      const startIndex1 = (currentPage1 - 1) * itemsPerPage1;
       const intialOrder1 = searchParams.get("order");
       let getProductByCategory2=getProductByCategory({token:localStorage.getItem("loginToken1"),
         listCategory:initialCategory,

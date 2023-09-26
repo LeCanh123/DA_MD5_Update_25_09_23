@@ -6,7 +6,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 
 //orm
 import {  Inject } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { In, Raw, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { QueryFailedError } from 'typeorm';
 import { CreateAdminCheckLoginDto,  } from './dto/admin-checklogin.dto';
@@ -15,6 +15,10 @@ import jwt from 'src/services/jwt';
 import { ProductImage } from '../productimages/entities/productimage.entity';
 import { Category } from '../category/entities/category.entity';
 import { CreateAdminDeleteProductDto } from './dto/admin-deleteproduct.dto';
+
+//query
+import { ILike } from "typeorm";
+
 
 
 @Injectable()
@@ -82,37 +86,71 @@ export class ProductsService {
   }
 
 
-  async findByPage(skip,take,sortby) {
-    // console.log("skip là",skip);
-    // console.log("take là",take);
+  async findByPage(skip,take,sortby,search) {
+    console.log("skip là",skip);
+    console.log("take là",take);
+    console.log("search là",search);
     try{
 
 
-      
-
-      let findByPageResult=await this.productRepository.find({skip,take});
-      const categorys = await this.categoryRepository.find({where:{sex:"men",block:"null"}});
-      const categoryIds = categorys.map(category => category.id);
-
-      const products1 = await this.productRepository.find({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },
-      relations: ['productimage'],
-      order: {
-        price:sortby=="desc"?'DESC':'ASC'
+      if(search){
+        let findByPageResult=await this.productRepository.find({skip,take});
+        const categorys = await this.categoryRepository.find({where:{sex:"men",block:"null"}});
+        const categoryIds = categorys.map(category => category.id);
+  
+        const products1 = await this.productRepository.find({
+          skip,take, 
+        where: {block:"null", 
+                category: { id: In(categoryIds),
+                            block:"null" }, 
+                title:ILike(`%${search}%`)
+              },
+        relations: ['productimage'],
+        order: {
+          price:sortby=="desc"?'DESC':'ASC'
+        }
+        });
+        console.log("products1",products1);
+        
+        
+        const [products, total] = await this.productRepository.findAndCount({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },relations: ['productimage'] });
+  
+        return {
+          status:true,
+          message:"get product by page success",
+          data:products1,
+          total:total
+        
+        }
+      }else{
+        let findByPageResult=await this.productRepository.find({skip,take});
+        const categorys = await this.categoryRepository.find({where:{sex:"men",block:"null"}});
+        const categoryIds = categorys.map(category => category.id);
+  
+        const products1 = await this.productRepository.find({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },
+        relations: ['productimage'],
+        order: {
+          price:sortby=="desc"?'DESC':'ASC'
+        }
+        });
+        
+        const [products, total] = await this.productRepository.findAndCount({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },relations: ['productimage'] });
+  
+        return {
+          status:true,
+          message:"get product by page success",
+          data:products1,
+          total:total
+        
+        }
       }
-      });
-      
-      const [products, total] = await this.productRepository.findAndCount({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },relations: ['productimage'] });
 
-return {
-  status:true,
-  message:"get product by page success",
-  data:products1,
-  total:total
 
-}
 
     }
     catch(err){
+      console.log(err);
+      
     return {
       status:false,
     message:"Lấy Danh Sách Product findByPage không thành công"

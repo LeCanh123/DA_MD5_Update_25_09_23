@@ -101,7 +101,11 @@ export const getProductByCategory =(paramObj: any, dispatch: Dispatch<AnyAction>
   async function  getProductByCategory1() {
   // dispatch(getMenRequestPending());
   try {
-    const res = await userProduct.getProductByCategory(paramObj.token,paramObj.listCategory,paramObj.skip,paramObj.take,paramObj.sortby);
+    const res = await userProduct.getProductByCategory(paramObj.token,paramObj.listCategory,paramObj.skip,
+      paramObj.take,
+      paramObj.sortby,
+      paramObj.search,
+      );
     
     dispatch(getProductByCategorysl(res.data));
     
