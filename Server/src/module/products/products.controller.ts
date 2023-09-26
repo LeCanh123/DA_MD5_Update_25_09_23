@@ -65,6 +65,8 @@ export class ProductsController {
 
 @Post("getproductbycategory")
 getProductByCategory(@Body() data){
+  console.log("vào getproductbycategory");
+  
   return this.productsService.getProductByCategory(data)
 
 }

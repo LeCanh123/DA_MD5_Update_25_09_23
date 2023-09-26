@@ -28,6 +28,8 @@ const menSlice = createSlice({
       state.search=payload.data;
     },
     getProductByCategorysl: (state, { payload }) => {//v
+      console.log("vào getProductByCategoryslgetProductByCategorysl");
+      
       state.men = payload.data;
       state.total = payload.total;
       state.search=payload
@@ -99,11 +101,13 @@ export const getProductByCategory =(paramObj: any, dispatch: Dispatch<AnyAction>
   async function  getProductByCategory1() {
   // dispatch(getMenRequestPending());
   try {
-    const res = await userProduct.getProductByCategory(paramObj.token,paramObj.listCategory,paramObj.skip,paramObj.take);
+    const res = await userProduct.getProductByCategory(paramObj.token,paramObj.listCategory,paramObj.skip,paramObj.take,paramObj.sortby);
     
     dispatch(getProductByCategorysl(res.data));
     
   } catch (error) {
+    console.log("llooix getProductByCategory");
+    
     dispatch(getMenRequestFailure());
   }
 };

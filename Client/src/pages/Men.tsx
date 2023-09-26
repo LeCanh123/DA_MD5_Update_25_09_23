@@ -32,7 +32,7 @@ export const Men = () => {
   useEffect(()=> {
     console.log("vào đây ròi searchParams");
     
-    let sortProduct=sortbyprice({genderType:"men",sortType:intialOrder},dispatch);
+    // let sortProduct=sortbyprice({genderType:"men",sortType:intialOrder},dispatch);
     let getcategory1:any=getCategory({token:localStorage.getItem("loginToken1")},dispatch)
     console.log(initialCategory.length,"initialCategory.length");
     
@@ -46,6 +46,32 @@ export const Men = () => {
       // let menproduct=fetchMensData("",dispatch);
     }
   }, [searchParams]);
+
+
+  useEffect(()=> {
+    console.log("vào đây ròi intialOrder");
+    
+    const initialCategory1 = searchParams.getAll("category");
+    if(initialCategory1.length!=0){
+      const itemsPerPage1 = import.meta.env.VITE_ITEM_PER_PAGE;
+      const currentPage1 = parseInt(searchParams.get('page')) || 1;
+      const startIndex1 = (currentPage1 - 1) * itemsPerPage;
+      const intialOrder1 = searchParams.get("order");
+      let getProductByCategory2=getProductByCategory({token:localStorage.getItem("loginToken1"),
+        listCategory:initialCategory,
+        skip:startIndex1,
+        take:itemsPerPage1,
+        sortby:intialOrder1
+        },dispatch)
+    }else{
+      const itemsPerPage1 = import.meta.env.VITE_ITEM_PER_PAGE;
+      const currentPage1 = parseInt(searchParams.get('page')) || 1;
+      const startIndex1 = (currentPage - 1) * itemsPerPage;
+      const intialOrder1 = searchParams.get("order");
+      let menproduct= fetchMensData({skip:startIndex1,take:import.meta.env.VITE_ITEM_PER_PAGE,sortby:intialOrder1},dispatch);
+    }
+
+  }, [intialOrder]);
 
 
 

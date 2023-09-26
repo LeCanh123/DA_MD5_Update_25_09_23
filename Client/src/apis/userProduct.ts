@@ -59,8 +59,8 @@ export default {
         }
           );
     },
-    getProductByCategory:async (token:any,category:any,skip:any,take:any)=> {
-      return axios.post(import.meta.env.VITE_SERVER_HOST+`api/v1/products/getproductbycategory`,{token,listCategory:category,skip,take})
+    getProductByCategory:async (token:any,category:any,skip:any,take:any,sortby:any)=> {
+      return axios.post(import.meta.env.VITE_SERVER_HOST+`api/v1/products/getproductbycategory`,{token,listCategory:category,skip,take,sortby})
         .then(res => {
           return res
         })
