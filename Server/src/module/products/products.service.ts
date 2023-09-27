@@ -47,13 +47,8 @@ export class ProductsService {
         category:{id:createProductDto.categoryId},
         block:"null"
       }
-
-      console.log("data1data1",data1);
-      
     
       const categorys=await this.productRepository.save(data1);
-      console.log("categorys",categorys);
- 
 
       let data2:any={
         image:String(createProductDto.image),
@@ -63,10 +58,8 @@ export class ProductsService {
         img4:String(createProductDto.img4),
         products:{id:categorys.id}
       }
-   console.log("data2",data2);
-   
+
       const images=await this.productImageRepository.save(data2);
-      console.log("bảng image",images);
       
       return  {
         status: true,
@@ -76,20 +69,16 @@ export class ProductsService {
 
       
     } catch (error) {
-      console.log("errr",error);
-      
-      return  {
-        status: false,
-        message: "Error Add Product !",
-              }
+        console.log("errr",error);
+        return  {
+          status: false,
+          message: "Error Add Product !",
+                }
     }
   }
 
 
   async findByPage(skip,take,sortby,search) {
-    console.log("skip là",skip);
-    console.log("take là",take);
-    console.log("search là",search);
     try{
 
 
@@ -100,26 +89,40 @@ export class ProductsService {
   
         const products1 = await this.productRepository.find({
           skip,take, 
-        where: {block:"null", 
-                category: { id: In(categoryIds),
+          where: {block:"null", 
+                category: { id: In(categoryIds), 
                             block:"null" }, 
                 title:ILike(`%${search}%`)
               },
-        relations: ['productimage'],
-        order: {
+          relations: ['productimage'],
+          order: {
           price:sortby=="desc"?'DESC':'ASC'
-        }
+          }
         });
         console.log("products1",products1);
         
         
-        const [products, total] = await this.productRepository.findAndCount({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },relations: ['productimage'] });
+        const [products, total] = await this.productRepository.findAndCount(
+          {
+            skip,take, 
+          where: {block:"null", 
+                  category: { id: In(categoryIds), 
+                              block:"null" }, 
+                  title:ILike(`%${search}%`)
+                },
+          relations: ['productimage'],
+          order: {
+            price:sortby=="desc"?'DESC':'ASC'
+          }
+          }
+        );
+  console.log("total,total",total);
   
         return {
           status:true,
           message:"get product by page success",
           data:products1,
-          total:total
+          total:total?total:1
         
         }
       }else{
@@ -127,11 +130,14 @@ export class ProductsService {
         const categorys = await this.categoryRepository.find({where:{sex:"men",block:"null"}});
         const categoryIds = categorys.map(category => category.id);
   
-        const products1 = await this.productRepository.find({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },
-        relations: ['productimage'],
-        order: {
-          price:sortby=="desc"?'DESC':'ASC'
-        }
+        const products1 = await this.productRepository.find({skip,take, 
+          where: {
+            block:"null", 
+            category: { id: In(categoryIds),block:"null" } },
+          relations: ['productimage'],
+          order: {
+            price:sortby=="desc"?'DESC':'ASC'
+          }
         });
         
         const [products, total] = await this.productRepository.findAndCount({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },relations: ['productimage'] });
@@ -161,8 +167,6 @@ export class ProductsService {
   }
 
   async findAll() {
-    console.log("vào findall");
-    
       try{
      
         const categorys = await this.categoryRepository.find({where:{sex:"men",block:"null"}});
@@ -207,20 +211,40 @@ export class ProductsService {
 
       const categoryIds = categorys.map(category => category.id);
       
-      const products1 = await this.productRepository.find({skip:data.skip,take:data.take, where: { category: { id: In(categoryIds) },block:"null" },relations: ['productimage'] ,
-      order: {
-        price:data?.sortby=="desc"?'DESC':'ASC'
-      }
+      const products1 = await this.productRepository.find({
+        skip:data.skip,
+        take:data.take, 
+        where: {  category: { id: In(categoryIds) },
+                  block:"null" ,
+                  title:ILike(`%${data.search}%`)
+                },
+        relations: ['productimage'] ,
+        order: {
+          price:data?.sortby=="desc"?'DESC':'ASC'
+        }
     });
-      const [products, total] = await this.productRepository.findAndCount({skip:data.skip,take:data.take, where: { category: { id: In(categoryIds) },block:"null" },
-      relations: ['productimage']
-    });
+      const [products, total] = await this.productRepository.findAndCount({
+        skip:data.skip,
+        take:data.take, 
+        where: {  category: { id: In(categoryIds) },
+                  block:"null" ,
+                  title:ILike(`%${data.search}%`)
+                },
+        relations: ['productimage'] ,
+        order: {
+          price:data?.sortby=="desc"?'DESC':'ASC'
+        }
+    }
+
+        
+    
+    );
 
       return {
         status: true,
         message: "Get Product by category success !",
         data: products1,
-        total
+        total:total?total:1
               }
 
       

@@ -39,7 +39,6 @@ export class UsersService {
 
       //gửi mail
       let createConfirmEmailToken= jwt.createToken({...createUserDto,time:new Date()}, 30000);
-      console.log("createConfirmEmailToken",createConfirmEmailToken);
 
       let resultGenEmailString=genEmailString({
         productName:"Clothes Shop",              //tên shop
@@ -104,7 +103,6 @@ export class UsersService {
           {where: {username: loginUserDto.username}}
         );
 
-        console.log("userAbout",userAbout);
         isCorrectPassword=await bcrypt.compare(loginUserDto.password, userAbout[0].password);
       //nếu đúng mât khẩu
       if(isCorrectPassword){
@@ -170,7 +168,6 @@ export class UsersService {
   async checktoken( tokenUserDto:TokenUserDto){
   try{
     let unpack:any= jwt.verifyToken(tokenUserDto.token);
-    console.log("unpack,unpack",unpack);
     if(unpack){
       console.log("Giải nén thành công");
       
@@ -408,7 +405,6 @@ async changeInfo(updateUserDto:UpdateUserDto){
     
     const usersData = fs.readFileSync("user.json", 'utf8');
     const users = JSON.parse(usersData);
-    console.log("users",users);
     return users.users
   }
 

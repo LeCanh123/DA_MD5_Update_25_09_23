@@ -9,7 +9,7 @@ import { useSearchParams } from "react-router-dom";
 
 function SearchBar() {
   const dispatch = useDispatch();
-  const [search1,setSearch1]=useState("");
+
 
 
   const [searchParams, setSearchParams]:any = useSearchParams();
@@ -22,6 +22,11 @@ function SearchBar() {
   const { search } = useSelector((store:any) => {
     return store.MenReducer;
   });
+  const [search1,setSearch1]=useState("");
+
+
+  console.log("searchsearch",search);
+  
   const handleSearch=(e:any)=>{
     console.log("search ",e);
     if(e){
@@ -48,7 +53,6 @@ function SearchBar() {
         const intialOrder1 = searchParams.get("order");
         let menproduct= fetchMensData({skip:startIndex1,take:import.meta.env.VITE_ITEM_PER_PAGE,sortby:intialOrder1,
           search:e
-        
         },dispatch);
       }
 
@@ -65,15 +69,19 @@ function SearchBar() {
           listCategory:initialCategory,
           skip:startIndex1,
           take:itemsPerPage1,
-          sortby:intialOrder1
+          sortby:intialOrder1,
+          search:e
           },dispatch)
       }else{
         const itemsPerPage1 = import.meta.env.VITE_ITEM_PER_PAGE;
         const currentPage1 = parseInt(searchParams.get('page')) || 1;
         const startIndex1 = (currentPage1 - 1) * itemsPerPage1;
         const intialOrder1 = searchParams.get("order");
-        let menproduct= fetchMensData({skip:startIndex1,take:import.meta.env.VITE_ITEM_PER_PAGE,sortby:intialOrder1},dispatch);
+        let menproduct= fetchMensData({skip:startIndex1,take:import.meta.env.VITE_ITEM_PER_PAGE,sortby:intialOrder1,
+          search:e
+        },dispatch);
       }
+      let searchProductResult=searchProduct({key:e,search:"false"},dispatch);
     }
   }
 

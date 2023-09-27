@@ -85,16 +85,9 @@ export class CategoryService {
   }
 
   async findAll(token:string) {
-    console.log("token",token);
-    
     try{
       let unpack:any= jwt.verifyToken(token);
-      console.log("unpack",unpack);
-      
       if(unpack.username=="admin"){
-        console.log("là admin");
-        
-       
         const categorys = await this.categoryRepository.find({where:{block:"null"}});
         return {
           status: true,
@@ -111,7 +104,7 @@ export class CategoryService {
       }
     }
     catch(err){
-    console.log("Lỗi Hệ Thống");
+    console.log("err findAll category");
       return {
         status:false,
         message:"Lỗi hệ thống"

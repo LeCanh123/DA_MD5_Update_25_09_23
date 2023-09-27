@@ -28,8 +28,6 @@ export class CartsService {
 
 //thêm sp vào giỏ
   async add(createCartDto: CreateCartDto) {
-    console.log("createCartDto",createCartDto);
-    
     try{
       let unpack:any= jwt.verifyToken(createCartDto.token);
       if(unpack){
@@ -103,8 +101,6 @@ export class CartsService {
       if(unpack){
         //lấy sản phẩm trong giỏ
         //tìm giỏ hàng
-console.log("unpack.id",unpack.id);
-
         let findUserBag:any=await this.bagRepository.find({where:{user:{id:unpack.id},block:"null"}});
           //nếu không tìm thấy giỏ
           if(findUserBag.length==0){

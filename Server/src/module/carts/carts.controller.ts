@@ -20,8 +20,6 @@ export class CartsController {
   @Post("remove")
   async remove(@Body() removeCartDto: RemoveCartDto) {
     let removeResult= await this.cartsService.remove(removeCartDto);
-    console.log("removeResult",removeResult);
-    
      return removeResult
   }
 

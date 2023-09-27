@@ -31,8 +31,6 @@ export const Men = () => {
   
   useEffect(()=> {
     console.log("vào đây ròi searchParams");
-    
-    // let sortProduct=sortbyprice({genderType:"men",sortType:intialOrder},dispatch);
     let getcategory1:any=getCategory({token:localStorage.getItem("loginToken1")},dispatch)
     console.log(initialCategory.length,"initialCategory.length");
     
@@ -43,7 +41,14 @@ export const Men = () => {
         take:import.meta.env.VITE_ITEM_PER_PAGE
         },dispatch)
     }else{
-      // let menproduct=fetchMensData("",dispatch);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const intialOrder1 = searchParams.get("order");
+      let menproduct= fetchMensData({
+        skip:startIndex,
+        take:import.meta.env.VITE_ITEM_PER_PAGE,
+        sortby:intialOrder1,
+        search:isSearch=="true"?search:""
+      },dispatch);
     }
   }, [searchParams]);
 
@@ -82,9 +87,11 @@ export const Men = () => {
     let menproduct=fetchMensData({skip:0,take:import.meta.env.VITE_ITEM_PER_PAGE},dispatch);
     // getcart1(localStorage.getItem("loginToken1"),dispatch);
   }, []);
-  const { men } = useSelector((store:any) => {
+  const { men ,isSearch,search} = useSelector((store:any) => {
     return store.MenReducer;
   });
+  console.log("isSearchisSearch",isSearch);
+  
 
 //phân trang
   const itemsPerPage = import.meta.env.VITE_ITEM_PER_PAGE;
@@ -94,50 +101,50 @@ export const Men = () => {
 
   useEffect(()=>{
     console.log("vào đây ròi currentPage");
-
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    //nếu không có category
-    // console.log("initialCategory.length",initialCategory.length);
-    const initialCategory1 = searchParams.getAll("category");
-    const intialOrder1 = searchParams.get("order");
-    
-    if(initialCategory1.length!=0){
+          const startIndex = (currentPage - 1) * itemsPerPage;
+          const endIndex = startIndex + itemsPerPage;
+          //nếu không có category
+          // console.log("initialCategory.length",initialCategory.length);
+          const initialCategory1 = searchParams.getAll("category");
+          const intialOrder1 = searchParams.get("order");
+          //nếu không tìm theo danh mục
+          if(initialCategory1.length!=0){
+            let getProductByCategory2=getProductByCategory({
+              token:localStorage.getItem("loginToken1"),
+              listCategory:initialCategory,
+              skip:startIndex,
+              take:import.meta.env.VITE_ITEM_PER_PAGE,
+              sortby:intialOrder1,
+              search:isSearch=="true"?search:""
+            },dispatch)
+          // let menproduct= fetchMensData({skip:startIndex,take:import.meta.env.VITE_ITEM_PER_PAGE},dispatch);
       
-      let getProductByCategory2=getProductByCategory({token:localStorage.getItem("loginToken1"),
-      listCategory:initialCategory,
-      skip:startIndex,
-      take:import.meta.env.VITE_ITEM_PER_PAGE,
-      sortby:intialOrder1
-      },dispatch)
-    // let menproduct= fetchMensData({skip:startIndex,take:import.meta.env.VITE_ITEM_PER_PAGE},dispatch);
+          }else{
+            let menproduct= fetchMensData({
+              skip:startIndex,
+              take:import.meta.env.VITE_ITEM_PER_PAGE,
+              sortby:intialOrder1,
+              search:isSearch=="true"?search:""
+            },dispatch);
+      
+          }
 
-    }else{
-      let menproduct= fetchMensData({skip:startIndex,take:import.meta.env.VITE_ITEM_PER_PAGE,sortby:intialOrder1},dispatch);
+      
+    
 
-    }
 
   },[currentPage])
 
-  //  getPaginatedProducts =  () => {
-  //   const startIndex = (currentPage - 1) * itemsPerPage;
-  //   const endIndex = startIndex + itemsPerPage;
-  //   console.log("startIndex",startIndex);
-  //   console.log("endIndex",endIndex);
-    
-  //   let menproduct= fetchMensData({skip:startIndex,take:endIndex},dispatch);
 
-  // return men
-  // }
+let getPaginatedProducts =men?men:[]
 
-  
-
-
-
-// console.log("getPaginatedProducts",getPaginatedProducts);
-
-let getPaginatedProducts =men
-
+//lấy số lượng sp trong giỏ hàng
+useEffect(() => {
+  async function getCart(){
+    await getcart1(localStorage.getItem("loginToken1"),dispatch);
+  }
+  getCart();
+}, []);
 
   return (
     <div>

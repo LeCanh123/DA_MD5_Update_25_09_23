@@ -30,7 +30,6 @@ async userGetCategory(@Body() token) {
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     
     let createCategoryResult= await this.categoryService.create(createCategoryDto);
-    console.log(createCategoryResult);
     return createCategoryResult;
     
   }

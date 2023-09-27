@@ -25,8 +25,6 @@ export class ProductsController {
   async findAll() {
     try{
       let findAllResult=await this.productsService.findAll();
-      console.log("findAllResult",findAllResult);
-      
           return findAllResult
     }
     catch(err){
@@ -40,16 +38,11 @@ export class ProductsController {
   }
   @Post("findbypage")
   findByPage(@Body() data,@Query('skip', ParseIntPipe) skip: number, @Query('take', ParseIntPipe) take: number,) {
-    console.log("vào findByPage",data);
-    
     try{
         if(take){
           return this.productsService.findByPage(skip,take,data.sortby,data.search);
-          
         }
         else{
-          console.log("vào else");
-          
           return this.productsService.findAll();
         }
     }
@@ -65,8 +58,6 @@ export class ProductsController {
 
 @Post("getproductbycategory")
 getProductByCategory(@Body() data){
-  console.log("vào getproductbycategory");
-  
   return this.productsService.getProductByCategory(data)
 
 }
@@ -87,31 +78,21 @@ getProductByCategory(@Body() data){
   // @UseInterceptors(FilesInterceptor('image'))
   // @UseInterceptors(FilesInterceptor('image'))
   async create(@Body() createProductDto: CreateProductDto,@UploadedFiles() image: Array<Express.Multer.File>) {
-    console.log("CreateProductDto.username",createProductDto);
-    console.log("image",image);
-    
     try{
-
       const originalFileName = image[0].originalname;
       const fileExtension = path.extname(originalFileName); // Trích xuất đuôi tệp tin
       const uploadedFilePath = image[0].path;
       const newFilePath = uploadedFilePath + fileExtension; // Đường dẫn mới với đuôi tệp tin đúng
-      console.log("newFilePath",newFilePath);
-      
       fs.renameSync(uploadedFilePath, newFilePath); // Đổi tên tệp tin
-
       //upload
       let avatarProcess;
       if(image){
         avatarProcess = await uploadFileToStorage(image[0], "products", fs.readFileSync(newFilePath));
        }
-      console.log("đường dẫn firebase",avatarProcess);
       //xoá sau khi upload
       fs.unlinkSync(newFilePath);
 
       let createProductResult=await this.productsService.create({...createProductDto,image:avatarProcess});
-      console.log("createProductResult",createProductResult);
-
       return createProductResult;
     }
     catch(err){
@@ -135,8 +116,6 @@ getProductByCategory(@Body() data){
   @Post("admin/deleteproduct")
   async adminDeleteProduct(@Body() CreateAdminDeleteProductDto:CreateAdminDeleteProductDto){
     let adminDeleteProductResult=await this.productsService.adminDeleteProduct(CreateAdminDeleteProductDto);
-    console.log("adminDeleteProductResult",CreateAdminDeleteProductDto);
-    
     return adminDeleteProductResult
   }
 

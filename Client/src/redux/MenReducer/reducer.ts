@@ -11,7 +11,7 @@ const menSlice = createSlice({
     women: [],
     men:[],
     category1:[],
-    search:[],
+    search:"",
     isSearch:false
   },
   reducers: {
@@ -25,14 +25,14 @@ const menSlice = createSlice({
       state.isError = false;
       state.total = payload.total;
       state.men = payload.data;
-      state.search=payload.data;
+      // state.search=payload.data;
     },
     getProductByCategorysl: (state, { payload }) => {//v
       console.log("vào getProductByCategoryslgetProductByCategorysl");
       
       state.men = payload.data;
       state.total = payload.total;
-      state.search=payload
+      // state.search=payload
     },
     sortByPriceSuccess: (state, { payload }) => {
       if(payload.genderType=="men"){
@@ -44,12 +44,12 @@ const menSlice = createSlice({
       }
     },
     searchProductsl: (state, { payload }) => {//v
-      if(payload.search=="true"){
-        state.men=state.search.filter((e:any)=>{
-          return e.title?.toLowerCase().includes(payload.key.toLowerCase())})
-      }else{
-        state.men=state.search
-      }     
+console.log("payload.search",payload.search);
+console.log("payload.key",payload.key);
+
+      state.isSearch=payload.search;
+      state.search=payload.key
+   
     },
     getCategoryRequestSuccess: (state, { payload }) => {//v
       state.category1 = payload.men;
