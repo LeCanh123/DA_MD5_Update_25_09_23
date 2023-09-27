@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
-import { BoxchatGateWay } from "./boxchat.gateway";
+// import { Module } from "@nestjs/common";
+// import { BoxchatGateWay } from "./boxchat.gateway";
 
-@Module({
-    providers: [BoxchatGateWay]
-})
-export class GatewayModule {}
+// @Module({
+//     providers: [BoxchatGateWay]
+// })
+// export class GatewayModule {}

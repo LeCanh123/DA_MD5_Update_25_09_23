@@ -1,12 +1,12 @@
 import { Global, Module } from '@nestjs/common';
-import { discordService } from './discord.service';
+import { DiscordService1 } from './discord.service'; 
 
 
 @Global()
 @Module({
     imports:[],
   controllers: [],
-  providers: [discordService],
-  exports:[discordService],
+  providers: [DiscordService1],
+  exports:[DiscordService1],
 })
-export class DiscordModule {}
+export class DiscordModule2 {}

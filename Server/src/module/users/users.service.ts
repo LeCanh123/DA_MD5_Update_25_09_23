@@ -397,6 +397,26 @@ export class UsersService {
       }
     }
   }
+  
+  async getInfoChatbox(data){
+    try{
+    let unpack:any= jwt.verifyToken(data.token);
+    return {
+      status:true,
+      data:unpack
+    }
+    }
+    catch(err){
+      return {
+        status:false,
+        data:null
+      }
+    }
+
+
+
+
+  }
 
   //admin
   async getListUser(data){

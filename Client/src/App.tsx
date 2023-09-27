@@ -14,15 +14,19 @@ function App() {
   const userStore = useSelector((store: StoreType) => {
     return store.userReducer
   })
+  console.log("userStoreuserStore",userStore);
   
   /* Check Token */
   useEffect(() => {
-    axios.post("http://127.0.0.1:3000/api/v1/authentication", {
+    axios.post("http://127.0.0.1:3000/api/v1/users/getinfochatbox", {
       token: localStorage.getItem("loginToken1")
     })
-    .then(res => {
-      if(res.status == 200) {
+    .then((res:any) => {
+      console.log("ress",res);
+
+      if(res.data.status) {
         dispatch(userAction.setData(res.data.data))
+
       }else {
         // localStorage.removeItem("loginToken1")
       }
@@ -53,10 +57,15 @@ function App() {
             }
           })
         }} style={{position: "fixed", right: "50px", bottom: "50px"}}>Open Chat</button>
-        : <div style={{width: "400px", position: "fixed", right: 0, bottom: 0}}>
-                
+        : <div style={{width: "400px", position: "fixed", right: 0, bottom: 0,zIndex:"1000000"}}>
+
+
+          <div onClick={()=>setOpenChat(false)} style={{position:"relative",top:"90px",left:"-20px",textAlign:"center",display:"flex",justifyContent:"end"}}>
+            <div style={{width:"80px",height:"30px",backgroundColor:"red",borderRadius:"3px",zIndex:"1"}}>  Close Chat</div>
+          </div>
           <ChatBox open={openChat}/>
-          <h5  onClick={(e)=>{e.preventDefault();setOpenChat(false)}}>Close</h5>
+
+
         </div>
       }
     </>

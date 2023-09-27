@@ -18,12 +18,14 @@ import Admin from "../pages/Admin";
 import UserInfo from "../pages/UserInfo";
 import History from "@/pages/History";
 import ManageUserCart from "./Admin/ManageUsersCart";
-
+import Chatbox from "./chatbox/ChatBox";
 function MainRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/men" element={<Men />} />
+      <Route path="/chatbox" element={<Chatbox open={true} />} />
+
       {/* <Route path="/" element={<HomePage />} />
       <Route path="/men" element={<Men />} />
       <Route path="/women" element={<Women />} />

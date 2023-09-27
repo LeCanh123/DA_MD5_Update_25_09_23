@@ -172,6 +172,12 @@ export class UsersController {
     return this.usersService.reConfirmEmail(tokenUserDto)
   }
 
+  //chatbox
+  @Post('getinfochatbox')
+  getInfoChatbox(@Body() data) {
+    return this.usersService.getInfoChatbox(data)
+  }
+
   //admin
   @Post('getlistuser')
   getlistUser(@Body() data){

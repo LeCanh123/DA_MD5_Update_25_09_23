@@ -11,21 +11,25 @@ export class GateWay1 {
     @PrimaryGeneratedColumn('uuid')
     id:number;
 
-    @Column({type:"enum",enum:Chattype})
-    type: Chattype 
-
     @Column()
     adminId: string 
-
-
-    @Column()
-    time: string 
 
     @Column()
     content: string 
 
+
     @Column()
-    textChanelDiscord: string 
+    type: string 
+
+    @Column()
+    textChannelDiscordId:string
+
+    @Column()
+    time: string 
+
+
+
+ 
 
 
     // @Column()

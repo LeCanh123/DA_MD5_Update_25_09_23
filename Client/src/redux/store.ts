@@ -2,12 +2,14 @@ import { configureStore,combineReducers } from '@reduxjs/toolkit';
 import MenReducer from "./MenReducer/reducer"
 import cartReducer from "./cartReducer/reducer"
 import { userReducer } from './userReducer/user.slice';
+import { boxChatReducer } from './boxChatReducer/boxChat.slice';
 
 // Kết hợp reducer
 const rootReducer = combineReducers({
   MenReducer,
   cartReducer,
-  userReducer
+  userReducer,
+  boxChatReducer
 });
 
 
