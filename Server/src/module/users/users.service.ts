@@ -398,64 +398,34 @@ async changeInfo(updateUserDto:UpdateUserDto){
   }
 }
 
-
-  findAll() {
-    // const filePath = path.join(__dirname, 'user.json');
-    // console.log(__dirname);
-    
-    const usersData = fs.readFileSync("user.json", 'utf8');
-    const users = JSON.parse(usersData);
-    return users.users
-  }
-
-  findOne(id: number) {
-    const usersData = fs.readFileSync('user.json', 'utf8');
-    const users = JSON.parse(usersData);
-  
-    const user = users.users.find((user: any) => user.id === id);
-  
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+//admin
+async getListUser(data){
+  try {
+    let findUser = await this.userRepository.find({
+      relations: ['bags'],
+      where: {
+        bags: {
+          // block: "null"
+        }
+      }
+    });
+    return {
+      status:true,
+      message:"Lấy danh sách user thành công",
+      data:findUser
     }
-  
-    return user;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    const usersData = fs.readFileSync('user.json', 'utf8');
-    const users = JSON.parse(usersData);
-  
-    const user = users.users.find((user: any) => user.id === id);
-  
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+  } catch (err:any) {
+    return {
+      status:true,
+      message:"Lấy danh sách user thất bại",
+      data:[]
     }
-  
-    Object.assign(user, updateUserDto);
-  
-    const updatedUsersData = JSON.stringify(users);
-    fs.writeFileSync('user.json', updatedUsersData, 'utf8');
-  
-    return user;
   }
+}
 
-  remove(id: number) {
-    const usersData = fs.readFileSync('user.json', 'utf8');
-    const users = JSON.parse(usersData);
-  console.log("users",users);
+
   
-    const userIndex = users.users.findIndex((user: any) => user.id === id);
-  
-    if (userIndex === -1) {
-      throw new NotFoundException(`User with id ${id} not found`);
-    }
-  
-    const removedUser = users.users.splice(userIndex, 1)[0];
-  
-    const updatedUsersData = JSON.stringify(users);
-    fs.writeFileSync('user.json', updatedUsersData, 'utf8');
-  
-    return removedUser;
-  }
+
+
 }
 

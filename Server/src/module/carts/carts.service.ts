@@ -264,17 +264,23 @@ async changeQuantity(chageQuantityCartDto:ChageQuantityCartDto){
   }
 }
 
-  findAll() {
-    return `This action returns all carts`;
-  }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cart`;
+//admin
+ async getUserCart(data) {
+    try {
+      let findUserCart=await this.bagRepository.find({ relations: ['user',"carts","address","carts.products","carts.products.productimage"] });
+      return {
+        status:true,
+        message:"Lấy danh sách cart user thành công",
+        data:findUserCart
+      }
+    } catch (err:any) {
+      return {
+        status:true,
+        message:"Lấy danh sách user cart thất bại",
+        data:[]
+      }
+    }
   }
-
-  update(id: number, updateCartDto: UpdateCartDto) {
-    return `This action updates a #${id} cart`;
-  }
-
 
 }

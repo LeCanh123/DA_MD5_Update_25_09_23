@@ -4,7 +4,7 @@ export default {
 
   getlistUser:(token:any)=> {
     console.log("newUser",token);
-    return axios.post(import.meta.env.VITE_SERVER_HOST+`apis/v1/adminuser/getlistuser`,{token})
+    return axios.post(import.meta.env.VITE_SERVER_HOST+`api/v1/users/getlistuser`,{token})
       .then(res => {
         return res
       })
@@ -18,7 +18,7 @@ export default {
   },
   getListUserCart:(token:any)=> {
     console.log("newUser",token);
-    return axios.post(import.meta.env.VITE_SERVER_HOST+`apis/v1/adminuser/getlistusercart`,{token})
+    return axios.post(import.meta.env.VITE_SERVER_HOST+`api/v1/carts/admin/getusercart`,{token})
       .then(res => {
         return res
       })

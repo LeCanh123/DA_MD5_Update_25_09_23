@@ -58,12 +58,17 @@ function ManageUsers() {
       <Grid width="70%" h={"auto"} ml="20px" m={"auto"} style={{position:"relative",top:"100px"}}>
         <TableContainer width="90%" h={"auto"} ml="150px" mb="20px">
           <Table variant="simple">
-            <Thead bg="#285e61">
-              <Tr>
+
+
+
+            <Thead >
+
+
+              <Tr bg="#6699FF">
                 <Th color={"white"}>S.No</Th>
                 <Th color={"white"}>User Name</Th>
                 <Th color={"white"}>User email</Th>
-                <Th color={"white"}>User password</Th>
+                <Th color={"white"}>Total Order</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -76,10 +81,18 @@ function ManageUsers() {
                         {el.username}
                       </Td>
                       <Td>{el.email}</Td>
-                      <Td>{el.password}</Td>
+                      <Td>{el.bags?.filter((el:any)=>el.block=="true").length}</Td>
                     </Tr>
                   );
                 })}
+
+
+          <Tr style={{marginBottom:"100px",backgroundColor:"#F8F8FF"}}>
+            <Th color={"white"}>&nbsp;</Th>
+            <Th color={"white"}>&nbsp;</Th>
+            <Th color={"red"} style={{textAlign:"left",fontSize:"15px"}}>Total User</Th>
+            <Td color={"red"} style={{textAlign:"left",fontWeight:"bold"}}>{userData.length} Member</Td>
+          </Tr>
             </Tbody>
           </Table>
         </TableContainer>

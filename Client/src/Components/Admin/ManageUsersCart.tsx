@@ -86,7 +86,7 @@ function ManageUserCart() {
                 userCardData.map((el:any, i:any) => {
                   return (
                     <>
-                      <Tr key={el.id} style={{backgroundColor:"#285e61"}}>
+                      <Tr key={el.id} style={{backgroundColor:"#6699FF"}}>
                       <Td>{i + 1}</Td>
                       <Td>
                         {"User Name"}

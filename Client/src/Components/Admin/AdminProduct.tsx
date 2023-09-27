@@ -16,7 +16,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import AdminNavbar from "./AdminNavbar";
 import adminProduct from "@/apis/adminProduct";
@@ -26,6 +26,27 @@ import adminProduct from "@/apis/adminProduct";
 function AdminProduct1() {
   const [men, setMen] = useState([]);
   const toast = useToast();
+
+
+  const navigate = useNavigate();
+  
+  async function checkAdmin(){
+    let checkAdminLoginResult= await adminProduct.adminCheckLogin(localStorage.getItem("loginToken1"));
+    console.log("checkAdminLoginResult",checkAdminLoginResult);
+    if(checkAdminLoginResult.data?.status){
+    }else{
+      navigate("/")
+      toast({
+        title: "Err",
+        description: checkAdminLoginResult.data?.message,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      });
+    }
+}
+checkAdmin();
 
   
 async function getData(e:any){

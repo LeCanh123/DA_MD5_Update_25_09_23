@@ -28,9 +28,15 @@ export class CartsController {
     return this.cartsService.get(getCartDto);
   }
 
-  @Post("changequantity")
+  @Post("changequantity") 
   changequantity(@Body() chageQuantityCartDto: ChageQuantityCartDto) {
     return this.cartsService.changeQuantity(chageQuantityCartDto);
+  }
+
+  //admin
+  @Post("admin/getusercart")
+  getUserCart(@Body() data) {
+    return this.cartsService.getUserCart(data);
   }
 
 

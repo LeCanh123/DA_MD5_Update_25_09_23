@@ -2,38 +2,42 @@ import {FormControl,FormLabel,Input,Select,Button,useToast,} from "@chakra-ui/re
 import AdminNavbar from "./AdminNavbar";
 import { useEffect, useState } from "react";
 import apiAdminProduct from "@/apis/adminProduct";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "@justbootstrap/JustBootstrap.scss"
 import Loading from "@loading/Loading"
 import "./AdminManageProduct.css";
 //
 import { BsGraphUpArrow } from "react-icons/bs";
 import { MdOutlineProductionQuantityLimits, MdOutlineAddCircleOutline } from "react-icons/md";
-
-
-
-
-  const initailState = {
-    image: "",
-    img1: "",
-    img2: "",
-    img3: "",
-    img4: "",
-    price: 0,
-    actualPrice: 0,
-    title: "",
-    gender: "",
-    category: "",
-  };
-
+import adminProduct from "@/apis/adminProduct";
+  const initailState = {image: "",img1: "",img2: "",img3: "",img4: "",price: 0,actualPrice: 0,title: "",gender: "",category: "",};
   const AdminEdit = () => {
+    const navigate = useNavigate();
+  
+    async function checkAdmin(){
+      let checkAdminLoginResult= await adminProduct.adminCheckLogin(localStorage.getItem("loginToken1"));
+      console.log("checkAdminLoginResult",checkAdminLoginResult);
+      if(checkAdminLoginResult.data?.status){
+      }else{
+        navigate("/")
+        toast({
+          title: "Err",
+          description: checkAdminLoginResult.data?.message,
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+          position: "top",
+        });
+      }
+    }
+    checkAdmin();
+  
     let [productCategory1,setProductCategory1]:any = useState({
       none: [{ id: -1, name: 'Chưa có danh mục' }],
     });
 
     let   [isLoading,setIsLoading]=useState(false)
     let   [reloadCategory,setReloadCategory]=useState(1);
-    let   [listCategory,setListCategory]=useState([{sex:"",id:-1,name:"1"}])
     const [categoryId, setSelectedId] = useState("-1");                 //lưu id của sản phẩm sau khi đã chọn
     console.log("categoryId",categoryId);
     
@@ -41,38 +45,26 @@ import { MdOutlineProductionQuantityLimits, MdOutlineAddCircleOutline } from "re
           setSelectedId(event.target.value);
         };
 
-      //useeffect getcategory
-      useEffect(() => {
-          async function getCategory1(){
-          let listCategory1:any= await apiAdminProduct.getCategory(String(localStorage.getItem("loginToken1")));
-          
-            if(listCategory1.status==true){
-              setListCategory(listCategory1.data)
-            }
-          }
-          getCategory1()
-      }, [reloadCategory]);
+
 
       //useeffect deletecategory
-      let [listdeleteCategory,setdeleteListCategory]=useState([{sex:"Chưa có Danh Mục",id:-1,name:"Chưa có Danh Mục"}]);
-      useEffect(() => {
+    let [listdeleteCategory,setdeleteListCategory]=useState([{sex:"Chưa có Danh Mục",id:-1,name:"Chưa có Danh Mục"}]);
+    useEffect(() => {
         async function getCategory2(){
           let listCategory1:any= await apiAdminProduct.getCategory(String(localStorage.getItem("loginToken1")));
-            if(listCategory1.data?.status){
-          setdeleteListCategory(listCategory1.data.data)
-            }
+          if(listCategory1.data?.status){
+            setdeleteListCategory(listCategory1.data.data)}
         }
         getCategory2()
-      }, [reloadCategory]);
+    }, [reloadCategory]);
 
       //useeffect product getcategory
       const [selectedSex, setSelectedSex] = useState('none');    
       
-      
-      
-      const handleChangeGender = (event:any) => {                       
-        setSelectedSex(event.target.value);};
-      useEffect(() => {
+    const handleChangeGender = (event:any) => {                       
+      setSelectedSex(event.target.value);};
+
+    useEffect(() => {
         async function productGetCategory(){
         let listCategory2:any= await apiAdminProduct.productGetCategory(localStorage.getItem("loginToken1"));
           if(listCategory2.status){
@@ -80,7 +72,7 @@ import { MdOutlineProductionQuantityLimits, MdOutlineAddCircleOutline } from "re
           }
         }
         productGetCategory()
-      }, [reloadCategory]);
+    }, [reloadCategory]);
 
     const [product, setProduct] = useState(initailState);
     const { id } = useParams();
@@ -99,44 +91,21 @@ import { MdOutlineProductionQuantityLimits, MdOutlineAddCircleOutline } from "re
     const handleAddProduct =async (e:any) => {
       const fileimage:any = document.getElementById('image00');
       const image = fileimage.files[0];
-  // //
-  //     const fileimage1:any = document.getElementById('img1');
-  //     const img1 = fileimage1.files[0];
-  // //
-  //     const fileimage2:any = document.getElementById('img2');
-  //     const img2 = fileimage2.files[0];
-  // //
-  //     const fileimage3:any = document.getElementById('img3');
-  //     const img3 = fileimage3.files[0];
-  // //
-  //     const fileimage4:any = document.getElementById('img4');
-  //     const img4 = fileimage4.files[0];
-  //
       const price: any = parseFloat((document.getElementById('price') as HTMLInputElement).value);
       const actualPrice: number = parseFloat((document.getElementById('actualPrice') as HTMLInputElement).value);
       const title: string = (document.getElementById('title') as HTMLInputElement).value;
-      // const gender = document.getElementById('gender').value;
-      // const category = document.getElementById('category').value;
       
       const formData:any = new FormData();
       formData.append('image', image);
-      // formData.append('img1', img1);
-      // formData.append('img2', img2);
-      // formData.append('img3', img3);
-      // formData.append('img4', img4);
       formData.append('price', price);
       formData.append('actualprice', actualPrice);
       formData.append('title', title);
-      // formData.append('gender', gender);
       formData.append('categoryId', categoryId);
       formData.append('token', localStorage.getItem("loginToken1"));
-      // formData.append('id', id);
 
       setIsLoading(true)
       try{
         let data:any=await apiAdminProduct.addProduct(formData);
-        // console.log("data 126 ",data);
-        
         setIsLoading(false)
         if(data.data.status){
           toast({
@@ -213,7 +182,8 @@ import { MdOutlineProductionQuantityLimits, MdOutlineAddCircleOutline } from "re
     const handleDeleteCategory =async (e:any) => {
               // e.preventDefault();
               setIsLoading(true)
-              let deleteCategoryResult:any=await apiAdminProduct.deleteCategory(localStorage.getItem("loginToken1"),deleteCategoryId);
+              let deleteCategoryResult:any=await apiAdminProduct.deleteCategory(
+                localStorage.getItem("loginToken1"),deleteCategoryId);
               if(deleteCategoryResult.data?.status){
                 toast({
                   title: "Success",
@@ -304,23 +274,25 @@ import { MdOutlineProductionQuantityLimits, MdOutlineAddCircleOutline } from "re
             bg={"#f7f8f7"}
             style={{padding:"10px"}}
           >
-            <div style={{backgroundColor:"#FFCCFF",fontSize:"20px",color:"black"}}>Add Category</div>
+            <div style={{backgroundColor:"#6699FF",fontSize:"20px",color:"white"}}>Add Category</div>
             <form encType="multipart/form-data">
     
-            <FormLabel mt={"12px"}>Type (man,women...)</FormLabel>
+            <FormLabel mt={"12px"} style={{color:"black"}}>Type (man,women...)</FormLabel>
             <Input
               type="text"
               id="categoryType1"
+              style={{color:"black"}}
             />
     
-            <FormLabel mt={"12px"}>Category Name</FormLabel>
+            <FormLabel mt={"12px"} style={{color:"black"}}>Category Name</FormLabel>
             <Input
               type="text"
               id="categoryName1"
+              style={{color:"black"}}
             />
     
             {/* <Input type="submit"/> */}
-            <Button ml={"155px"} mt={"20px"} bg={"skyblue"} type="submit" style={{margin:"auto"}}>
+            <Button ml={"155px"} mt={"20px"} bg={"skyblue"} type="submit" style={{margin:"auto",color:"black"}}>
               Add Category
             </Button>
             </form>
@@ -342,13 +314,13 @@ import { MdOutlineProductionQuantityLimits, MdOutlineAddCircleOutline } from "re
             style={{padding:"10px"}}
     
           >
-            <div style={{backgroundColor:"#FFCCFF",fontSize:"20px",color:"black"}}>Delete Category</div>
+            <div style={{backgroundColor:"#6699FF",fontSize:"20px",color:"white"}}>Delete Category</div>
             <form encType="multipart/form-data">
             
             <Select
               // placeholder="Select Catergory"
               onChange={e=>handleChangedeleteId(e)}
-              style={{marginTop:"30px"}}
+              style={{marginTop:"30px",color:"black"}}
               // defaultValue={-1}
             >
             {listdeleteCategory.map(item => (
@@ -387,77 +359,57 @@ import { MdOutlineProductionQuantityLimits, MdOutlineAddCircleOutline } from "re
             style={{padding:"10px"}}
     
           >
-            <div style={{backgroundColor:"#FFCCFF",fontSize:"20px",color:"black"}}>Add Product</div>
+            <div style={{backgroundColor:"#6699FF",fontSize:"20px",color:"white"}}>Add Product</div>
             <form 
             encType="multipart/form-data"
             onSubmit={e=>{
               e.preventDefault();
               handleAddProduct("")}}
             >
-            <FormLabel mt={"12px"}>Image</FormLabel>
+            <FormLabel mt={"12px"} style={{color:"black"}}>Image</FormLabel>
             <Input
               type="file"
               id="image00"
+              style={{color:"black"}}
             />
-            {/* <FormLabel mt={"12px"}>Image1</FormLabel>
-            <Input
-              type="file"
-              id="img1"
-            /> */}
     
-            {/* <FormLabel mt={"12px"}>Image2</FormLabel>
-            <Input
-              type="file"
-              id="img2"
-            /> */}
-    
-            {/* <FormLabel mt={"12px"}>Image3</FormLabel>
-            <Input
-                type="file"
-                id="img3"
-            /> */}
-    
-            {/* <FormLabel mt={"12px"}>Image4</FormLabel>
-            <Input
-                  type="file"
-                  id="img4"
-            /> */}
-    
-            <FormLabel mt={"12px"}>Price</FormLabel>
+            <FormLabel mt={"12px"} style={{color:"black"}}>Price</FormLabel>
             <Input
               type="number"
               id="price"
             />
     
-            <FormLabel mt={"12px"}>Actual Price</FormLabel>
+            <FormLabel mt={"12px"} style={{color:"black"}}>Actual Price</FormLabel>
             <Input
               type="number"
               id="actualPrice"
             />
     
-            <FormLabel mt={"12px"}>Title</FormLabel>
+            <FormLabel mt={"12px"} style={{color:"black"}}>Title</FormLabel>
             <Input
               type="text"
               id="title"
             />
     
-          <FormLabel mt={"12px"}>Gender</FormLabel>
+          <FormLabel mt={"12px"} style={{color:"black"}}>Gender</FormLabel>
           <Select
             name="gender"
             id="gender"
             placeholder="Select Gender"
             onChange={(e) => handleChangeGender(e)}
+            style={{color:"black"}}
           >
             {Object.keys(productCategory1).map(category => (
-              <option key={category} value={category}>{category}</option>
+              <option key={category} value={category}>{category} </option>
             ))}
           </Select>
-          <FormLabel mt={"12px"} mb={"10px"}>
+          <FormLabel mt={"12px"} mb={"10px"} style={{color:"black"}}>
             Category
           </FormLabel>
           <Select
             placeholder="Select Category"
             onChange={handleChangeCategoryId}
+            style={{color:"black"}}
           >
             {productCategory1[selectedSex]?productCategory1[selectedSex].map((item: { id: any; name: string }) => (
               <option key={item.id} value={item.id}>{item.name}</option>

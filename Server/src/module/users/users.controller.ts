@@ -172,19 +172,10 @@ export class UsersController {
     return this.usersService.reConfirmEmail(tokenUserDto)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  //admin
+  @Post('getlistuser')
+  getlistUser(@Body() data){
+    return this.usersService.getListUser(data)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
-
-  @Get("/123/1")
-  findAll1(@Res() response: Response) {
-    // Sửa đổi mã trạng thái thành 200
-    response.status(203).json('OK');
-  }
 }
