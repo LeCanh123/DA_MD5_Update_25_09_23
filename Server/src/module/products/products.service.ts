@@ -196,56 +196,105 @@ export class ProductsService {
 
   async getProductByCategory(data){
     console.log("data?.sortby==desc",data?.sortby=="desc");
+    console.log("data.search",data);
+    
     
     try {
-      console.log("data",data);
-      
-      const categorys = await this.categoryRepository.createQueryBuilder('category')
-      .where('category.sex = :sex', { sex: 'men' })
-      .where('category.block = :block', { block: 'null' })
-      .where('category.name IN (:...names)', {names: data.listCategory })
-      // .leftJoinAndSelect('category.products', 'product')
-      .getMany();
-
-
-
-      const categoryIds = categorys.map(category => category.id);
-      
-      const products1 = await this.productRepository.find({
-        skip:data.skip,
-        take:data.take, 
-        where: {  category: { id: In(categoryIds) },
-                  block:"null" ,
-                  title:ILike(`%${data.search}%`)
-                },
-        relations: ['productimage'] ,
-        order: {
-          price:data?.sortby=="desc"?'DESC':'ASC'
-        }
-    });
-      const [products, total] = await this.productRepository.findAndCount({
-        skip:data.skip,
-        take:data.take, 
-        where: {  category: { id: In(categoryIds) },
-                  block:"null" ,
-                  title:ILike(`%${data.search}%`)
-                },
-        relations: ['productimage'] ,
-        order: {
-          price:data?.sortby=="desc"?'DESC':'ASC'
-        }
-    }
-
+      if(data.search){
+        console.log("vào if");
+        console.log("data.search",data.search);
         
-    
-    );
-
-      return {
-        status: true,
-        message: "Get Product by category success !",
-        data: products1,
-        total:total?total:1
-              }
+        
+        const categorys = await this.categoryRepository.createQueryBuilder('category')
+        .where('category.sex = :sex', { sex: 'men' })
+        .where('category.block = :block', { block: 'null' })
+        .where('category.name IN (:...names)', {names: data.listCategory })
+        // .leftJoinAndSelect('category.products', 'product')
+        .getMany();
+  
+        const categoryIds = categorys.map(category => category.id);
+        const products1 = await this.productRepository.find({
+          skip:data.skip,
+          take:data.take, 
+          where: {  category: { id: In(categoryIds) },
+                    block:"null" ,
+                    title:ILike(`%${data.search}%`)
+                  },
+          relations: ['productimage'] ,
+          order: {
+            price:data?.sortby=="desc"?'DESC':'ASC'
+          }
+      });
+        const [products, total] = await this.productRepository.findAndCount({
+          skip:data.skip,
+          take:data.take, 
+          where: {  category: { id: In(categoryIds) },
+                    block:"null" ,
+                    title:ILike(`%${data.search}%`)
+                  },
+          relations: ['productimage'] ,
+          order: {
+            price:data?.sortby=="desc"?'DESC':'ASC'
+          }
+      }
+  
+          
+      
+      );
+  
+        return {
+          status: true,
+          message: "Get Product by category success !",
+          data: products1,
+          total:total?total:1
+          }
+      }
+      else{
+        console.log("vào else");
+        
+        const categorys = await this.categoryRepository.createQueryBuilder('category')
+        .where('category.sex = :sex', { sex: 'men' })
+        .where('category.block = :block', { block: 'null' })
+        .where('category.name IN (:...names)', {names: data.listCategory })
+        // .leftJoinAndSelect('category.products', 'product')
+        .getMany();
+  
+        const categoryIds = categorys.map(category => category.id);
+        const products1 = await this.productRepository.find({
+          skip:Number(data.skip),
+          take:Number(data.take), 
+          where: {  category: { id: In(categoryIds) },
+                    block:"null" ,
+                  },
+          relations: ['productimage'] ,
+          order: {
+            price:data?.sortby=="desc"?'DESC':'ASC'
+          }
+      });
+        const [products, total] = await this.productRepository.findAndCount({
+          skip:data.skip,
+          take:data.take, 
+          where: {  category: { id: In(categoryIds) },
+                    block:"null" 
+                  },
+          relations: ['productimage'] ,
+          order: {
+            price:data?.sortby=="desc"?'DESC':'ASC'
+          }
+      }
+  
+          
+      
+      );
+  
+        return {
+          status: true,
+          message: "Get Product by category success !",
+          data: products1,
+          total:total?total:1
+          }
+      }
+     
 
       
     } catch (error) {
