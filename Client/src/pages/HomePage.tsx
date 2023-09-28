@@ -42,7 +42,7 @@ function HomePage() {
 
   useEffect(() => {
     async function getCart(){
-      let checkTokenLoginResult= checkTokenLogin.userchecktoken(localStorage.getItem("loginToken1"));
+      let checkTokenLoginResult=await checkTokenLogin.userchecktoken(localStorage.getItem("loginToken1"));
       console.log("checkTokenLoginResult",checkTokenLoginResult);
       
     }

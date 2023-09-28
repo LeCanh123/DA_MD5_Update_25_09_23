@@ -20,8 +20,6 @@ function App() {
   
   /* Check Token */
   useEffect(() => {
-    console.log("lấy id chatffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-    
     axios.post("http://127.0.0.1:3000/api/v1/users/getinfochatbox", {
       token: localStorage.getItem("loginToken1")
     })
@@ -47,7 +45,22 @@ function App() {
 
 
   //tạo kết nối chatbox
+    //mở lên tự kết nối server
+    useEffect(() => {
 
+        /* Connect */
+        let connectSocket=io(`http://127.0.0.1:3002`, {
+          query: {
+            "token": localStorage.getItem("loginToken1")
+          }
+        });
+        dispatch(userAction.setSocketClient({connectSocket}))
+
+        /* Disconnect */
+        // socketClient?.disconnect();
+        // setSocketClient(null)
+      
+    }, [])
 
 
   return (

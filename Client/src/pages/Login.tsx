@@ -73,7 +73,7 @@ const navigate = useNavigate();
       localStorage.setItem("loginToken1",LoginRequest1.data.token)
       localStorage.setItem("loginName1",LoginRequest1.data.lastname)
 
-      navigate("/")
+      window.location.href="/";
     }else{
       toast({
         title: LoginRequest1.data.message,

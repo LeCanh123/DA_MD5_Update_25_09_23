@@ -37,7 +37,7 @@ export default function Chatbox(data:any) {
   console.log("messageData",messageData);
   
 
-  //mở lên tự kết nối server
+  // mở lên tự kết nối server
   useEffect(() => {
     console.log("kết nối lại");
     console.log("data.open",data.open);
@@ -59,6 +59,10 @@ export default function Chatbox(data:any) {
     }
   }, [data])
 
+
+  //lấy boxchat trong store
+
+
   useEffect(() => {
     console.log("vaof toonegr");
     
@@ -79,7 +83,7 @@ export default function Chatbox(data:any) {
 
   //lấy id về
   useEffect(() => {
-    console.log("load lại chatbox");
+    console.log("load lại chatbox lần thứ n");
     
   },[])
   function formatData(data: any) {
@@ -253,7 +257,7 @@ export default function Chatbox(data:any) {
               
               onClick={() => {
                 console.log("đã vào!")
-                socketClient?.emit('onMessage', {
+                userStore.socketClient.emit('onMessage', {
                   socketId: socketClient?.id,
                   userId: userStore?.id,
                   content: inputContent

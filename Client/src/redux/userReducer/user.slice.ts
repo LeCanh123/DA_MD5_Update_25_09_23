@@ -32,14 +32,19 @@ const initialState:any = null;
 const userSlice = createSlice({
     name: "user",
     initialState:{
-        id:""
+        id:"",
+        socketClient:""
     },
     reducers: {
         setData: function(state, action) {
-            console.log("action",action);
+           
             
           state.id= action.payload.id
+        },
+        setSocketClient: function(state, action) {
+          state.socketClient= action.payload.connectSocket
         }
+
     }
 })
 

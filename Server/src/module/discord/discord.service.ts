@@ -5,7 +5,7 @@ import {Socket, io} from 'socket.io-client'
 @Injectable()
 export class DiscordService1 implements OnModuleInit { 
   client: Client<boolean>;
-  botToken:string ="MTE1Mzk4ODU2NjgyNTgyODQyNA.GaXMm5.qrnqpr1KfN-BHj0NCpk0CBchcjLoGJnvxtsIt8"
+  botToken:string ="MTE1Mzk4ODU2NjgyNTgyODQyNA.GBSdYJ.tT6PAPRE_ePJfcvF_6cH7VDNTgsSLjVgb4uqrA"
   guildId:string= "1141668475060887582"
 
   guild:Guild 
@@ -14,7 +14,7 @@ export class DiscordService1 implements OnModuleInit {
   constructor(){}
 
   onModuleInit() {
-    this.client = new Client({ 
+    this.client = new Client({  
         intents: [
             GatewayIntentBits.Guilds, 
             GatewayIntentBits.GuildMessages, 
