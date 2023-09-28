@@ -5,8 +5,9 @@ import {Socket, io} from 'socket.io-client'
 @Injectable()
 export class DiscordService1 implements OnModuleInit { 
   client: Client<boolean>;
-  botToken:string ="MTE1Mzk4ODU2NjgyNTgyODQyNA.GFJ_na.o7gHPSIZ-zr4lqmqsZALshDqfRFVmWbtZNPV8o"
+  botToken:string ="MTE1Mzk4ODU2NjgyNTgyODQyNA.GaXMm5.qrnqpr1KfN-BHj0NCpk0CBchcjLoGJnvxtsIt8"
   guildId:string= "1141668475060887582"
+
   guild:Guild 
 
   socketServer: Socket | null = null;

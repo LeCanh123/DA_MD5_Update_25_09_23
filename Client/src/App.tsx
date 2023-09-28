@@ -6,7 +6,7 @@ import { StoreType } from './redux/store';
 import { userAction } from './redux/userReducer/user.slice';
 import {Modal} from 'antd'
 import ChatBox from './Components/chatbox/ChatBox';
-
+import "./App.css"
 
 function App() {
   const dispatch = useDispatch()
@@ -60,8 +60,8 @@ function App() {
         : <div style={{width: "400px", position: "fixed", right: 0, bottom: 0,zIndex:"1000000"}}>
 
 
-          <div onClick={()=>setOpenChat(false)} style={{position:"relative",top:"90px",left:"-20px",textAlign:"center",display:"flex",justifyContent:"end"}}>
-            <div style={{width:"80px",height:"30px",backgroundColor:"red",borderRadius:"3px",zIndex:"1"}}>  Close Chat</div>
+          <div onClick={()=>setOpenChat(false)} style={{position:"relative",top:"95px",left:"-40px",textAlign:"center",display:"flex",justifyContent:"end"}}>
+            <div style={{width:"80px",height:"30px",borderRadius:"3px",zIndex:"1"}} className='ChatHover'>Close Chat</div>
           </div>
           <ChatBox open={openChat}/>
 

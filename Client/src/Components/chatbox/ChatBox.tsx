@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   MDBContainer,
   MDBRow,
@@ -114,11 +114,39 @@ export default function Chatbox(data:any) {
     }
     return result
   }
+
+  //nhấn enter để gửi tin
+  const handleKeyDown = (event:any) => {
+    console.log("event.key",event.key);
+    
+    if (event.key === 'Enter') {
+      console.log("Đã nhấn Enter!");
+      socketClient?.emit('onMessage', {
+        socketId: socketClient?.id,
+        userId: userStore?.id,
+        content: inputContent
+      });
+      setInputContent("")
+    }
+  };
+
+  //cuộn chuột
+  const messagesContainerRef = useRef(null);
+  useEffect(() => {
+    const messagesContainer:any = messagesContainerRef.current;
+    if (messagesContainer) {
+      messagesContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [messageData]);
+
+
   return (
-    <MDBContainer fluid className="py-5" style={{ backgroundColor: "transparent" }}>
-      <MDBRow className="d-flex justify-content-center">
-        <MDBCol>
-          <MDBCard id="chat2" style={{ borderRadius: "15px", border: "1px solid grey" }}>
+    <MDBContainer fluid className="py-5 antiHover" style={{ backgroundColor: "transparent" }} >
+      <MDBRow className="d-flex justify-content-center antiHover" style={{backgroundColor: "rgba(0, 128, 0, 0)"}}>
+        <MDBCol style={{height:"550px", backgroundColor: "rgba(0, 128, 0, 0)"}}>
+          <MDBCard id="chat2" style={{ borderRadius: "15px", border: "1px solid grey",paddingLeft:"0",marginLeft:"0",
+        position:"relative",left:"-12px",marginBottom:"0px"
+        }}>
             <MDBCardHeader className="d-flex justify-content-between align-items-center p-3">
               <h5 className="mb-0">Chat With Clothes Shop</h5>
               {/* <MDBBtn color="primary" size="sm" rippleColor="dark">
@@ -129,7 +157,7 @@ export default function Chatbox(data:any) {
             <div
               style={{ position: "relative", height: "400px", overflowY: "auto" }}
             >
-              <MDBCardBody>
+              <MDBCardBody ref={messagesContainerRef}>
                
                 {
                   
@@ -184,7 +212,7 @@ export default function Chatbox(data:any) {
                           <img
                             src={"https://cdnphoto.dantri.com.vn/ZZLqiMQLtrITlMnnTsawLyYRYjw=/thumb_w/1020/2023/03/20/3357568381177181079287642641097551173578941n-edited-edited-1679253933058.jpeg"}
                             alt="avatar "
-                            style={{ width: "45px", height: "100%" }}
+                            style={{ width: "45px", height: "45px" ,borderRadius:"50%"}}
                           />
                         </div>
                       )
@@ -197,7 +225,7 @@ export default function Chatbox(data:any) {
               <img
                 src={`https://cdnphoto.dantri.com.vn/ZZLqiMQLtrITlMnnTsawLyYRYjw=/thumb_w/1020/2023/03/20/3357568381177181079287642641097551173578941n-edited-edited-1679253933058.jpeg`}
                 alt="avatar 3"
-                style={{ width: "45px", height: "100%" }}
+                style={{ width: "45px", height: "45px" ,borderRadius:"50%"}}
               />
               <input
                 type="text"
@@ -205,6 +233,9 @@ export default function Chatbox(data:any) {
                 id="exampleFormControlInput1"
                 placeholder="Type message"
                 value={inputContent}
+
+                tabIndex={0}
+                onKeyDown={(event) => handleKeyDown(event)}
                 onChange={(e) => {
                   setInputContent(e.target.value)
                 }}
@@ -215,13 +246,19 @@ export default function Chatbox(data:any) {
               <a className="ms-3 text-muted" href="#!">
                 <MDBIcon fas icon="smile" />
               </a>
-              <span onClick={() => {
+              <span
+             
+             
+              
+              
+              onClick={() => {
                 console.log("đã vào!")
                 socketClient?.emit('onMessage', {
                   socketId: socketClient?.id,
                   userId: userStore?.id,
                   content: inputContent
-                })
+                });
+                setInputContent("")
               }} className="ms-3">
                 <MDBIcon fas icon="paper-plane" />
               </span>

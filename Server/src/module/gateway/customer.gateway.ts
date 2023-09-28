@@ -32,6 +32,7 @@ export class CustomerGateway implements OnModuleInit {
                 console.log("admin connected")
                 return
             }
+            console.log("user connected")
             let userDecode = jwt.verifyToken(String(socket.handshake.query.token))
             // this.discord.createTextChannel(String(userDecode.firstName + userDecode.lastName))
             
@@ -48,13 +49,15 @@ export class CustomerGateway implements OnModuleInit {
                     textChannelDiscordId: customerSerRes.status ? 
                     customerSerRes.data[0].textChannelDiscordId 
                     :
-                     (await this.discord.createTextChannel(String(userDecode.firstName +" "+ userDecode.lastName)))?.id
+                     (await this.discord.createTextChannel(String(userDecode.firstname +" "+ userDecode.lastname)))?.id
                 } 
 
                 this.socketClients.unshift(newSocketClient)
 
                 //nếu không có lịch sử nhắn 1 câu mở đầu
                 if(!customerSerRes.status) {
+                    console.log("vào customerSerRes.status 2 lần");
+                    
                      // nhắn 1 tin chào khách - save to db, send to discord channel
                      //lưu vào database trước khi nhắn
                     let serResChat = await this.customerService.create({
@@ -75,13 +78,14 @@ export class CustomerGateway implements OnModuleInit {
                     let customerSerRes2 = await this.customerService.findChatHistory(userDecode.id);
 
                     socket.emit("historyMessage", customerSerRes2.data)
+                //nếu có lịch sử
                 }else {
                     socket.emit("historyMessage", customerSerRes.data)
                 }
                
 
                 // trả về cho người dùng
-                socket.emit("connectStatus", `Chào mừng ${String(userDecode.firstName +" "+ userDecode.lastName)} đã kết nối!`)
+                socket.emit("connectStatus", `Chào mừng ${String(userDecode.firstname +" "+ userDecode.lastname)} đã kết nối!`)
             }
             // console.log(`Client có socket id là: ${socket.id} vừa kết nối!`)
             
@@ -165,8 +169,6 @@ export class CustomerGateway implements OnModuleInit {
         console.log("socketClient",socketClient);
         console.log("this.socketClients",this.socketClients);
         console.log("body.channelId",body.channelId);
-        
-        
         
     } 
 
