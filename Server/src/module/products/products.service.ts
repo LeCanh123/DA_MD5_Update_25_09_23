@@ -83,11 +83,11 @@ export class ProductsService {
 
 
       if(search){
-        let findByPageResult=await this.productRepository.find({skip,take});
-        const categorys = await this.categoryRepository.find({where:{sex:"men",block:"null"}});
+        let findByPageResult=await this.productRepository?.find({skip,take});
+        const categorys = await this.categoryRepository?.find({where:{sex:"men",block:"null"}});
         const categoryIds = categorys.map(category => category.id);
   
-        const products1 = await this.productRepository.find({
+        const products1 = await this.productRepository?.find({
           skip,take, 
           where: {block:"null", 
                 category: { id: In(categoryIds), 
@@ -102,7 +102,7 @@ export class ProductsService {
         console.log("products1",products1);
         
         
-        const [products, total] = await this.productRepository.findAndCount(
+        const [products, total] = await this.productRepository?.findAndCount(
           {
             skip,take, 
           where: {block:"null", 
@@ -126,11 +126,11 @@ export class ProductsService {
         
         }
       }else{
-        let findByPageResult=await this.productRepository.find({skip,take});
-        const categorys = await this.categoryRepository.find({where:{sex:"men",block:"null"}});
+        let findByPageResult=await this.productRepository?.find({skip,take});
+        const categorys = await this.categoryRepository?.find({where:{sex:"men",block:"null"}});
         const categoryIds = categorys.map(category => category.id);
   
-        const products1 = await this.productRepository.find({skip,take, 
+        const products1 = await this.productRepository?.find({skip,take, 
           where: {
             block:"null", 
             category: { id: In(categoryIds),block:"null" } },
@@ -140,7 +140,7 @@ export class ProductsService {
           }
         });
         
-        const [products, total] = await this.productRepository.findAndCount({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },relations: ['productimage'] });
+        const [products, total] = await this.productRepository?.findAndCount({skip,take, where: {block:"null", category: { id: In(categoryIds),block:"null" } },relations: ['productimage'] });
   
         return {
           status:true,
@@ -169,10 +169,10 @@ export class ProductsService {
   async findAll() {
       try{
      
-        const categorys = await this.categoryRepository.find({where:{sex:"men",block:"null"}});
+        const categorys = await this.categoryRepository?.find({where:{sex:"men",block:"null"}});
         const categoryIds = categorys.map(category => category.id);
 
-        const products = await this.productRepository.find({ where: {block:"null", category: { id: In(categoryIds),block:"null" } },relations: ['productimage'] });
+        const products = await this.productRepository?.find({ where: {block:"null", category: { id: In(categoryIds),block:"null" } },relations: ['productimage'] });
        
         return  {
           status:true,
@@ -213,7 +213,7 @@ export class ProductsService {
         .getMany();
   
         const categoryIds = categorys.map(category => category.id);
-        const products1 = await this.productRepository.find({
+        const products1 = await this.productRepository?.find({
           skip:data.skip,
           take:data.take, 
           where: {  category: { id: In(categoryIds) },
@@ -225,7 +225,7 @@ export class ProductsService {
             price:data?.sortby=="desc"?'DESC':'ASC'
           }
       });
-        const [products, total] = await this.productRepository.findAndCount({
+        const [products, total] = await this.productRepository?.findAndCount({
           skip:data.skip,
           take:data.take, 
           where: {  category: { id: In(categoryIds) },
@@ -260,7 +260,7 @@ export class ProductsService {
         .getMany();
   
         const categoryIds = categorys.map(category => category.id);
-        const products1 = await this.productRepository.find({
+        const products1 = await this.productRepository?.find({
           skip:Number(data.skip),
           take:Number(data.take), 
           where: {  category: { id: In(categoryIds) },
@@ -271,7 +271,7 @@ export class ProductsService {
             price:data?.sortby=="desc"?'DESC':'ASC'
           }
       });
-        const [products, total] = await this.productRepository.findAndCount({
+        const [products, total] = await this.productRepository?.findAndCount({
           skip:data.skip,
           take:data.take, 
           where: {  category: { id: In(categoryIds) },
@@ -310,7 +310,7 @@ export class ProductsService {
     // console.log("skip là",skip);
     // console.log("take là",take);
     try{
-      const [products, total] = await this.productRepository.findAndCount({
+      const [products, total] = await this.productRepository?.findAndCount({
         skip,
         take,
       });
@@ -318,7 +318,7 @@ export class ProductsService {
       console.log("total",total);
       
 
-      return this.productRepository.find({skip,take});
+      return this.productRepository?.find({skip,take}); 
     }
     catch(err){
     return {
@@ -367,10 +367,10 @@ export class ProductsService {
   async adminGetProduct(createAdminGetProductDto:CreateAdminGetProductDto){
     try {
 
-      const categorys=await this.categoryRepository.find({where:{sex:createAdminGetProductDto?.data?.type,block:"null"}});
+      const categorys=await this.categoryRepository?.find({where:{sex:createAdminGetProductDto?.data?.type,block:"null"}});
       const categoryIds = categorys.map(category => category.id);
 
-      const products = await this.productRepository.find({ where: { category: { id: In(categoryIds) },block:"null" },relations: ['productimage'] });
+      const products = await this.productRepository?.find({ where: { category: { id: In(categoryIds) },block:"null" },relations: ['productimage'] });
       console.log(products);
      
 

@@ -5,7 +5,7 @@ import {Socket, io} from 'socket.io-client'
 @Injectable()
 export class DiscordService1 implements OnModuleInit { 
   client: Client<boolean>;
-  botToken:string ="MTE1Mzk4ODU2NjgyNTgyODQyNA.GxzNRj.VcpAfFOeNQ9YzhAxwsOOJRiOSgMHpahEMj9Ct8"
+  botToken:string ="MTE1Mzk4ODU2NjgyNTgyODQyNA.GFJ_na.o7gHPSIZ-zr4lqmqsZALshDqfRFVmWbtZNPV8o"
   guildId:string= "1141668475060887582"
   guild:Guild 
 
@@ -32,7 +32,7 @@ export class DiscordService1 implements OnModuleInit {
         this.client.on('messageCreate', (message) => {
           
           if(!message.author.bot) {
-            this.socketServer.emit("onAdminMessage", {
+            this.socketServer?.emit("onAdminMessage", {
               channelId: message.channelId,
               content: message.content
             })

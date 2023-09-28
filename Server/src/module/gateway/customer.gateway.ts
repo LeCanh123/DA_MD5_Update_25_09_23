@@ -51,7 +51,7 @@ export class CustomerGateway implements OnModuleInit {
                      (await this.discord.createTextChannel(String(userDecode.firstName +" "+ userDecode.lastName)))?.id
                 } 
 
-                this.socketClients.push(newSocketClient)
+                this.socketClients.unshift(newSocketClient)
 
                 //nếu không có lịch sử nhắn 1 câu mở đầu
                 if(!customerSerRes.status) {
@@ -63,7 +63,7 @@ export class CustomerGateway implements OnModuleInit {
                         textChannelDiscordId: newSocketClient?.textChannelDiscordId,
                         time: String(Date.now()),
                         type: "ADMIN",
-                        userId: newSocketClient.user.id
+                        userId: newSocketClient?.user?.id
                     })
                     console.log("serResChat",serResChat);
                     
@@ -88,49 +88,115 @@ export class CustomerGateway implements OnModuleInit {
         })
     }
 
+    //theo dõi tin nhắn đính kèm token để phân biệt người dùng
+    //người dùng gửi lên chắc chắn nhận
     @SubscribeMessage('onMessage')
     async onMessage(@MessageBody() body: any) {
         console.log("body onMessage",body);
         
-        let socketClient:any = this.socketClients.find(client => client?.socket?.id == body?.socketId)
+
+        //giữ lại duy nhất
+        let foundFirstElement = false;
+        this.socketClients = this.socketClients?.filter(client => {
+        if (client?.socket?.id === body?.socketId && !foundFirstElement) {
+        foundFirstElement = true;
+        return true; // Giữ lại phần tử đầu tiên tìm thấy
+        }
+        return client?.socket?.id !== body?.socketId; // Loại bỏ các phần tử trùng id
+        });
+
+
+
+        let socketClient:any = this.socketClients?.find(client => client?.socket?.id == body?.socketId)
         let newChatRecourd = {
             adminId: "",
             content: body.content,
-            textChannelDiscordId: String(socketClient?.textChannelDiscordId),
+            textChannelDiscordId: String(socketClient?.textChannelDiscordId), 
             time: String(Date.now()),
             type: "USER",
             userId: body.userId
         }
        
-        await this.customerService.create(newChatRecourd);
+        await this.customerService.create(newChatRecourd); 
         let chatHistory = await this.customerService.findChatHistory(newChatRecourd.userId);
         this.discord.getTextChannel(String(socketClient?.textChannelDiscordId))?.send(
-            `${socketClient.user.firstname + " " + socketClient.user.lastname}:  ${newChatRecourd.content}`
+            `${socketClient?.user?.firstname + " " + socketClient?.user?.lastname}:  ${newChatRecourd.content}`
             )
-        socketClient.socket.emit("historyMessage", chatHistory.data)
+        socketClient?.socket?.emit("historyMessage", chatHistory.data)
     }
  
-    @SubscribeMessage('onAdminMessage')
+    @SubscribeMessage('onAdminMessage') 
     async adminSendMessage(@MessageBody() body: any) {
-        let socketClient = this.socketClients.find(client => client?.textChannelDiscordId == body.channelId)
+        console.log("vào onadminmessage");
+        
+        let socketClient = this.socketClients?.find(client => client?.textChannelDiscordId == body.channelId)
+
+        //giữ lại duy nhất
+        let foundFirstElement = false;
+        this.socketClients = this.socketClients?.filter(client => {
+        if (client.textChannelDiscordId == body?.channelId && !foundFirstElement) {
+        foundFirstElement = true;
+        return true; // Giữ lại phần tử đầu tiên tìm thấy
+        }
+        return client?.textChannelDiscordId != body?.channelId; // Loại bỏ các phần tử trùng id
+        });
+
+
         let newChatRecourd = {
             adminId: "",
             content: body.content,
             textChannelDiscordId: String(socketClient?.textChannelDiscordId),
             time: String(Date.now()),
             type: "ADMIN",
-            userId: socketClient.user.id
+            userId: socketClient?.user?.id
         }
        
-        await this.customerService.create(newChatRecourd);
+        console.log("newChatRecourd",newChatRecourd);
+        
+        let listChatHistory=await this.customerService.create(newChatRecourd);
+        console.log("listChatHistory",listChatHistory);
+        
         let chatHistory = await this.customerService.findChatHistory(newChatRecourd.userId);
         console.log("đã vào!", chatHistory.data.length)
-        // console.log('socketClient', socketClient)
         //chatHistory.data lấy từ database trả về
-        // console.log("chatHistory",chatHistory);
+        console.log("admin historyMessage");
         
-        socketClient.socket.emit("historyMessage", chatHistory.data)
-    }
+        socketClient?.socket?.emit("historyMessage", chatHistory.data)
+        console.log("socketClient",socketClient);
+        console.log("this.socketClients",this.socketClients);
+        console.log("body.channelId",body.channelId);
+        
+        
+        
+    } 
+
+
+
+
+
+    //lấy từ cổng lắng nghe discord gửi lại vào onAdminMessage
+    // @SubscribeMessage('onAdminMessage') 
+    // async adminSendMessage(@MessageBody() body: any) {
+    //     console.log("vào onadminmessage");
+        
+    //     let socketClient = this.socketClients?.find(client => client?.textChannelDiscordId == body.channelId)
+    //     let newChatRecourd = {
+    //         adminId: "",
+    //         content: body.content,
+    //         textChannelDiscordId: String(socketClient?.textChannelDiscordId),
+    //         time: String(Date.now()),
+    //         type: "ADMIN",
+    //         userId: socketClient?.user?.id
+    //     }
+       
+    //     await this.customerService.create(newChatRecourd);
+    //     let chatHistory = await this.customerService.findChatHistory(newChatRecourd.userId);
+    //     console.log("đã vào!", chatHistory.data.length)
+    //     //chatHistory.data lấy từ database trả về
+    //     console.log("admin historyMessage");
+        
+    //     socketClient?.socket?.emit("historyMessage", chatHistory.data)
+    // } 
 
 }
 
