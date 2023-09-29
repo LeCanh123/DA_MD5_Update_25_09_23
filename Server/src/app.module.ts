@@ -14,7 +14,8 @@ import { PurchaseModule } from './module/purchase/purchase.module';
   imports: [ConfigModule.forRoot(),ProductsModule,UsersModule,CategoryModule,
   CartsModule,
   PurchaseModule,
-  // GateWayModule1
+  GateWayModule1
+  // DiscordModule
   ],
   controllers: [AppController],
   providers: [AppService],
