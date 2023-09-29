@@ -4,9 +4,9 @@ import {Socket, io} from 'socket.io-client'
 
 @Injectable()
 export class DiscordService1 implements OnModuleInit { 
-  client: Client<boolean>;
-  botToken:string ="MTE1Mzk4ODU2NjgyNTgyODQyNA.GBSdYJ.tT6PAPRE_ePJfcvF_6cH7VDNTgsSLjVgb4uqrA"
-  guildId:string= "1141668475060887582"
+  client: Client<boolean>;a
+  botToken:string ="MTE1Mzk4OaaaaaaaaaaaaaaDU2NjgyNTgyODQaayNA.GaCUz7.fa5FAQtVLdoYwY3IzkDmUwaQJce5pFjJpxjHc5M"
+  guildId:string= "11416684750aaaaaaaaaa608a87582"
 
   guild:Guild 
 
@@ -20,7 +20,7 @@ export class DiscordService1 implements OnModuleInit {
             GatewayIntentBits.GuildMessages, 
             GatewayIntentBits.MessageContent,
         ],
-    });
+    }); 
 
     this.client.login(this.botToken); //login
 

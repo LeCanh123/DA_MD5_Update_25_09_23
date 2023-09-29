@@ -357,7 +357,7 @@ export class UsersService {
           .update(User)
           .set({password:hashpassword})
           .where("id = :id", { id: unpack.id })
-          .execute()
+          .execute();
         }
         if(updateUserDto.data.firstname){
           let updateConfirm=await this.userRepository

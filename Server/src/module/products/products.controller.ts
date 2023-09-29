@@ -75,18 +75,16 @@ getProductByCategory(@Body() data){
   }
 
   @Post()
-  // @UseInterceptors(FilesInterceptor('image'))
-  // @UseInterceptors(FilesInterceptor('image'))
   async create(@Body() createProductDto: CreateProductDto,@UploadedFiles() image: Array<Express.Multer.File>) {
     try{
-      const originalFileName = image[0].originalname;
+      const originalFileName = image?.[0]?.originalname;
       const fileExtension = path.extname(originalFileName); // Trích xuất đuôi tệp tin
-      const uploadedFilePath = image[0].path;
+      const uploadedFilePath = image?.[0]?.path;
       const newFilePath = uploadedFilePath + fileExtension; // Đường dẫn mới với đuôi tệp tin đúng
       fs.renameSync(uploadedFilePath, newFilePath); // Đổi tên tệp tin
       //upload
       let avatarProcess;
-      if(image){
+      if(image?.[0]){
         avatarProcess = await uploadFileToStorage(image[0], "products", fs.readFileSync(newFilePath));
        }
       //xoá sau khi upload
@@ -106,11 +104,56 @@ getProductByCategory(@Body() data){
 
   }
 
+  @Post("admin/update")
+  async update(@Body() createProductDto: CreateProductDto,@UploadedFiles() image: Array<Express.Multer.File>) {
+    try{
+      const originalFileName = String(image?.[0]?.originalname);
+      const fileExtension = String(path.extname(originalFileName)); // Trích xuất đuôi tệp tin
+      const uploadedFilePath = String(image?.[0]?.path);
+      const newFilePath = String(uploadedFilePath + fileExtension); // Đường dẫn mới với đuôi tệp tin đúng
+      
+      //upload
+      let avatarProcess;
+      if(image?.[0]){
+        fs.renameSync(uploadedFilePath, newFilePath); // Đổi tên tệp tin
+        console.log("vào tận đây");
+        
+        avatarProcess = await uploadFileToStorage(image[0], "products", fs.readFileSync(newFilePath));
+       }
+      //xoá sau khi upload
+      if(image?.[0]){
+        fs.unlinkSync(newFilePath);
+      }
+
+      let createProductResult=await this.productsService.update({...createProductDto,image:avatarProcess});
+      return createProductResult;
+    }
+    catch(err){
+      console.log("err",err);
+      
+      return {
+        status:false,
+        message:"Tạo Product Thất bại"
+      }
+    }
+
+    // return createProductDto.name
+
+  }
+
   @Post("admin/getproduct")
   async adminGetProduct(@Body() createAdminGetProductDto:CreateAdminGetProductDto){
     let adminGetProductResult=await this.productsService.adminGetProduct(createAdminGetProductDto);
     return adminGetProductResult
   }
+
+  @Post("admin/getupdateproduct")
+  async adminGetUpdateProduct(@Body() data){
+    let adminGetUpdateProductResult=await this.productsService.adminGetUpdateProduct(data);
+    return adminGetUpdateProductResult
+  } 
+
+  
 
 
   @Post("admin/deleteproduct")

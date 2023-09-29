@@ -35,48 +35,6 @@ export class ProductsService {
     private readonly categoryRepository:Repository<Category>,
   ) {}
 
-  
-  async create(createProductDto: CreateProductDto){
-    try {
-      //dữ liệu mẫu
-    
-      let data1:any={
-        title:createProductDto.title,
-        price:createProductDto.price,
-        actualprice:createProductDto.actualprice,
-        category:{id:createProductDto.categoryId},
-        block:"null"
-      }
-    
-      const categorys=await this.productRepository.save(data1);
-
-      let data2:any={
-        image:String(createProductDto.image),
-        img1:String(createProductDto.img1),
-        img2:String(createProductDto.img2),
-        img3:String(createProductDto.img3), 
-        img4:String(createProductDto.img4),
-        products:{id:categorys.id}
-      }
-
-      const images=await this.productImageRepository.save(data2);
-      
-      return  {
-        status: true,
-        message: "Add Product success !",
-        // data: users
-              }
-
-      
-    } catch (error) {
-        console.log("errr",error);
-        return  {
-          status: false,
-          message: "Error Add Product !",
-                }
-    }
-  }
-
 
   async findByPage(skip,take,sortby,search) {
     try{
@@ -332,6 +290,157 @@ export class ProductsService {
 
 
   //admin
+
+  async create(createProductDto: CreateProductDto){
+    try {
+      //dữ liệu mẫu
+    
+      let data1:any={
+        title:createProductDto.title,
+        price:createProductDto.price,
+        actualprice:createProductDto.actualprice,
+        category:{id:createProductDto.categoryId},
+        block:"null"
+      }
+    
+      const categorys=await this.productRepository.save(data1);
+
+      let data2:any={
+        image:String(createProductDto.image),
+        img1:String(createProductDto.img1),
+        img2:String(createProductDto.img2),
+        img3:String(createProductDto.img3), 
+        img4:String(createProductDto.img4),
+        products:{id:categorys.id}
+      }
+
+      const images=await this.productImageRepository.save(data2);
+      
+      return  {
+        status: true,
+        message: "Add Product success !",
+        // data: users
+              }
+
+      
+    } catch (error) {
+        console.log("errr",error);
+        return  {
+          status: false,
+          message: "Error Add Product !",
+                }
+    }
+  }
+
+  async adminGetUpdateProduct(data){
+    try {
+
+      const products = await this.productRepository?.find({ where: {  id: data.id ,block:"null" },relations: ['productimage'] });
+      console.log(products);
+     
+
+      return {
+        status: true,
+        message: "Get Product success !",
+        data: products
+    }
+
+      
+    } catch (error) {
+      console.log("errrrr",error);
+      
+      return { 
+        status: false,
+        message: "Error Get Product !",
+    }
+    }
+  }
+
+  async update(createProductDto: CreateProductDto){
+    console.log("vào edit product",createProductDto);
+    
+    // return {
+    //   status:false,
+    //   message:"Tạo Product Thất công"
+    // }
+
+    try {
+    if(createProductDto.title){
+      let updateConfirm=await this.productRepository
+      .createQueryBuilder()
+      .update(Product)
+      .set({title:createProductDto.title})
+      .where("id = :id", { id: createProductDto.productId })
+      .execute();
+    }
+    if(createProductDto.price){
+      let updateConfirm=await this.productRepository
+      .createQueryBuilder()
+      .update(Product)
+      .set({price:createProductDto.price})
+      .where("id = :id", { id: createProductDto.productId })
+      .execute();
+    }
+    if(createProductDto.actualprice){
+      let updateConfirm=await this.productRepository
+      .createQueryBuilder()
+      .update(Product)
+      .set({actualprice:createProductDto.actualprice})
+      .where("id = :id", { id: createProductDto.productId })
+      .execute();
+    }
+    if(createProductDto.image!="undefined"){
+let findIdProduct=await this.productImageRepository.find({where:{products:{id:createProductDto.productId}}})
+
+
+      let updateConfirm=await this.productImageRepository
+      .createQueryBuilder()
+      .update(ProductImage)
+      .set({image:createProductDto.image})
+      .where("id = :id", { id: findIdProduct[0].id })
+      .execute();
+    }
+
+      //dữ liệu mẫu
+    
+      let data1:any={
+        title:createProductDto.title,
+        price:createProductDto.price,
+        actualprice:createProductDto.actualprice,
+        category:{id:createProductDto.categoryId},
+        block:"null"
+      }
+    
+      //nếu update đủ các trường
+      // const categorys=await this.productRepository.save(data1);
+
+      let data2:any={
+        image:String(createProductDto.image),
+        img1:String(createProductDto.img1),
+        img2:String(createProductDto.img2),
+        img3:String(createProductDto.img3), 
+        img4:String(createProductDto.img4),
+        // products:{id:categorys.id}
+      }
+
+      // const images=await this.productImageRepository.save(data2);
+      
+      return  {
+        status: true,
+        message: "Update Product success !",
+        // data: users
+              }
+
+      
+    } catch (error) {
+        console.log("errr",error);
+        return  {
+          status: false,
+          message: "Error Update Product !",
+                }
+    }
+  }
+
   adminCheckToken(createAdminCheckLoginDto: CreateAdminCheckLoginDto){
     try{
       let unpack:any= jwt.verifyToken(createAdminCheckLoginDto.token);
@@ -424,7 +533,7 @@ export class ProductsService {
               }
       }
   
-}
+  }
 
 }
 
