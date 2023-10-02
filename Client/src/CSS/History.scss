@@ -92,3 +92,8 @@
     #progressbar-2 li:nth-child(4):after {
     left: 0;
     }
+
+
+    #progressbar-2 li.active:before, #progressbar-2 li.active:after {
+         background: #6520ff;
+    }

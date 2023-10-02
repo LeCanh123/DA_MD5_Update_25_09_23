@@ -33,7 +33,16 @@ const userSlice = createSlice({
     name: "user",
     initialState:{
         id:"",
-        socketClient:""
+        socketClient:"",
+
+        //cash
+        data: null,
+        socket:"",
+        receipts: null,
+        cart: null,
+        cartPayQr: null,
+        reLoad: false,
+
     },
     reducers: {
         setData: function(state, action) {
@@ -41,8 +50,28 @@ const userSlice = createSlice({
             
           state.id= action.payload.id
         },
+
         setSocketClient: function(state, action) {
           state.socketClient= action.payload.connectSocket
+        },
+        //cash
+        setSocket: function (state, action) {
+              state.socket= action.payload
+        },
+        setCashData: function(state, action) {
+              state.data= action.payload
+        },
+        setReceipt: function (state, action) {
+              state.receipts= action.payload
+        },
+        setCart: function (state, action) {
+              state.cart= action.payload
+        },
+        setCartPayQr: function (state, action) {
+              state.cartPayQr= action.payload
+        },
+        reload: function (state) {
+              state.reLoad= !state.reLoad
         }
 
     }

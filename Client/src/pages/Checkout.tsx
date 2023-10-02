@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -15,10 +15,16 @@ import Navbar from "../Components/Home/Navbar";
 // import { Link } from 'react-router-dom'
 import Footer from "../Components/Home/Footer";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { getcart1 } from "../redux/cartReducer/reducer";
 import userPurchase from "@/apis/userPurchase";
+import { StoreType } from "@/redux/store";
+import { Socket, io } from "socket.io-client";
+import { userAction } from "@/redux/userReducer/user.slice";
+import { Modal } from 'antd';
+
+
 
 const initialState = {
   name: "",
@@ -111,6 +117,82 @@ function Checkout() {
 
   }
 
+  //cash socket
+  const userStore = useSelector((store:any) => store.userReducer);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if(!userStore.data) {
+      let token = localStorage.getItem("loginToken1");
+      if(token) {
+        let socket: Socket = io("http://localhost:3001", {
+          query: {
+            token
+          }
+        })
+        socket.on("connectStatus", (data: {status:boolean, message: string}) => {
+          if(data.status) {
+            console.log(data.message)
+          }else {
+            console.log(data.message)
+          }
+        })
+        socket.on("disconnect", () => {
+          dispatch(userAction.setCashData(null))
+          console.log("đã out")
+        })
+
+        socket.on("receiveUserData", (user:any) => {
+         dispatch(userAction.setCashData(user))
+        })
+
+        socket.on("receiveReceipt", (receipts:any) => {
+          dispatch(userAction.setReceipt(receipts))
+         })
+
+        socket.on("receiveCart", (cart:any) => {
+        dispatch(userAction.setCart(cart))
+        })
+
+        socket.on("cash-status", (status: boolean) => {
+          if(status) {
+          
+            
+
+              toast({
+                title: "Đã thanh toán thành công",
+                description: "Cảm ơn bạn đã mua hàng",
+                status: "success",
+                duration: 2000,
+                isClosable: true,
+                position: "top",
+              });
+ 
+                // window.location.href= "/purchase-history"
+              
+           
+          }
+        })
+
+        socket.on("payQr", (url: string | null) => {
+          dispatch(userAction.setCartPayQr(url))
+          if(!url) {
+            Modal.confirm({
+              title: "Thanh toán thất bại",
+              content: "Bạn có muốn thanh toán lại không?",
+              onOk: () => {
+                socket.emit("payZalo", {
+                  receiptId: userStore.cart?.id,
+                  userId: userStore.data?.id
+                })
+              }
+            }) 
+          }
+        })
+
+        dispatch(userAction.setSocket(socket))
+      } 
+    }
+  }, [userStore.reLoad])
 
   return (
     <Box>
@@ -354,7 +436,58 @@ function Checkout() {
                         Mobile No: +91{storeADD.mobile}
                       </Text>
                     </Box>
-                    <Button
+
+
+
+          <form onSubmit={(e: React.FormEvent) => {
+          e.preventDefault();
+          let payMode  = (e.target as any).payMode.value;
+          console.log("payMode", payMode)
+          if(payMode == "CASH") {
+            console.log("cash");
+            createOrder();
+            // userStore.socket?.emit("payCash", {
+            //   receiptId: userStore.cart?.id,
+            //   userId: userStore.data?.id
+            // })
+          }
+
+          if(payMode == "ZALO") {
+            console.log("zalo");
+            
+            // userStore.socket?.emit("payZalo", {
+            //   receiptId: userStore.cart?.id,
+            //   userId: userStore.data?.id
+            // })
+          }
+
+       }}>
+          <input name='payMode' type="radio"  value={"CASH"} defaultChecked/>Cash<br></br>
+          <input name='payMode' type="radio"  value={"ZALO"} />Zalo
+          <Button
+                      type="submit"
+                      bgColor="#df9018"
+                      _hover={{ bgColor: "#f89f17" }}
+                      color="white"
+                      fontSize={{
+                        base: "13px",
+                        sm: "20px",
+                        md: "18px",
+                        lg: "20px",
+                      }}
+                      marginTop="20px"
+                      // onClick={() => {
+                      //   // navigate("/payment");
+                      //   createOrder();
+                      // }}
+                    >
+                      Proceed to Payment
+                    </Button>
+       </form>
+
+
+
+                    {/* <Button
                       type="submit"
                       bgColor="#df9018"
                       _hover={{ bgColor: "#f89f17" }}
@@ -372,7 +505,7 @@ function Checkout() {
                       }}
                     >
                       Proceed to Payment
-                    </Button>
+                    </Button> */}
                   </Flex>
                 ) : (
                   ""
