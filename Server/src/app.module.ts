@@ -8,6 +8,7 @@ import { CategoryModule } from './module/category/category.module';
 import { GateWayModule1 } from './module/gateway/gatetway.module';
 import { CartsModule } from './module/carts/carts.module';
 import { PurchaseModule } from './module/purchase/purchase.module';
+import { CartSocketModule } from './module/cartsocket/cartsocket.module';
 
 
 @Module({
@@ -15,6 +16,7 @@ import { PurchaseModule } from './module/purchase/purchase.module';
   CartsModule,
   PurchaseModule,
   // GateWayModule1
+  CartSocketModule
   ],
   controllers: [AppController],
   providers: [AppService],

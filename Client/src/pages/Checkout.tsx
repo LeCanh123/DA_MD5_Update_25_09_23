@@ -455,10 +455,9 @@ function Checkout() {
           if(payMode == "ZALO") {
             console.log("zalo");
             
-            // userStore.socket?.emit("payZalo", {
-            //   receiptId: userStore.cart?.id,
-            //   userId: userStore.data?.id
-            // })
+            userStore.socket?.emit("payZalo", {
+             token:localStorage.getItem("loginToken1"),
+            })
           }
 
        }}>

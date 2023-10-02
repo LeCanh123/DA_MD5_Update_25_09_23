@@ -1,4 +1,4 @@
-import { OnModuleInit } from "@nestjs/common";
+import { Inject, OnModuleInit } from "@nestjs/common";
 import jwt from "src/services/jwt";
 import { WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io'
@@ -11,6 +11,14 @@ import * as moment from "moment";
 import * as CryptoJS from "crypto-js";
 import axios from "axios";
 import * as qs from "qs";
+import { CartsService } from "../carts/carts.service"; 
+import { Cart } from "../carts/entities/cart.entity";
+import { Bag } from "../bags/entities/bag.entity";
+import { User } from "../users/entities/user.entity";
+import { Address } from "nodemailer/lib/mailer";
+
+
+
 interface ClientType {
     user,
     socket: Socket,
@@ -23,9 +31,17 @@ export class UserSocketGateway implements OnModuleInit {
     clients: ClientType[] = [];
 
     constructor(
-        // private readonly jwt: jwt,
-        // @InjectRepository(Receipt) private readonly receipts: Repository<Receipt>,
-        // @InjectRepository(ReceiptDetail) private readonly receiptDetail: Repository<ReceiptDetail>
+        @Inject('PURCHASE_REPOSITORY')
+        private addressRepository: Repository<Address>,
+        // private readonly cartsService: CartsService
+        @Inject('CART_REPOSITORY')
+        private cartRepository: Repository<Cart>,
+    
+        @Inject('BAG_REPOSITORY')
+        private bagRepository: Repository<Bag>,
+    
+        @Inject('USER_REPOSITORY')
+        private userRepository: Repository<User>,
     ) { }
 
     onModuleInit() {
@@ -48,33 +64,57 @@ export class UserSocketGateway implements OnModuleInit {
                 })
                 socket.disconnect();
             } else {
-                // if(this.clients.find(client => client.user.id == user.id)) {
-                //     socket.emit("connectStatus", {
-                //         message: "Đã đăng nhập ở 1 thiết bị khác!",
-                //         status: false
-                //     })
-                //     socket.disconnect()
-                //     return
-                // } 
+
                 /* Lưu trữ thông tin người dùng vừa kết nối để tương tác về sau */
                 this.clients.push({
                     socket,
                     user,
                     total
                 })
-                socket.on("payZalo" , async (data: {
-                    receiptId: string
-                }) => {
-                    let zaloCash = await this.zaloCreateReceipt(data.receiptId, user, Number(total));
-                    if(zaloCash) {
-                        for (let i in this.clients) {
-                            if(this.clients[i].user.id == user.id) {
-                                this.clients[i].socket.emit("receiveCart", zaloCash[0])
-                                this.clients[i].socket.emit("receiveReceipt", zaloCash[1])
-                                this.clients[i].socket.emit("cash-status", true)
-                            }
+                socket.on("payZalo" , async (data: any) => {
+                    console.log("vaof pay zalo",data);
+                    //giải nén token
+                    let unpack:any= jwt.verifyToken(data.token);
+                    if(unpack){
+                        //tìm giỏ hàng và tính tổng đơn
+                        let findUserBag:any=await this.bagRepository.find({where:{user:{id:unpack.id},block:"null"}});
+                        //nếu không tìm thấy giỏ
+                        if(findUserBag.length==0){
+                            //emit đến người dùng không có sp trong giỏ
+                        }
+                        //nếu tìm thấy giỏ
+                        else{
+                          //tìm sản phẩm trong giỏ
+                          let findUserCart=await this.cartRepository.find({where:{bag:{id:findUserBag[0].id}},
+                                                                          relations: ['products','products.productimage']
+                                                                      });
+                        //tính tổng đơn hàng
+                        let sumTotalCart=findUserCart.reduce((total:any, e:any) => {
+                            console.log(e.quantity);
+                              return total + e.products?.price * e.quantity}, 0);
+                        if(sumTotalCart==0){
+                            //emit đến người dùng không có sp trong giỏ
+                        }else{
+                            //tạo đơn zalo
+                            let zaloCash = await this.zaloCash(user, Number(sumTotalCart),socket);
+                        }
+     
+                
                         }
                     }
+                    else{
+                        //emit cho người dùng chưa đăng nhập
+                    }
+                    // let zaloCash = await this.zaloCreateReceipt(data.receiptId, user, Number(total));
+                    // if(zaloCash) {
+                    //     for (let i in this.clients) {
+                    //         if(this.clients[i].user.id == user.id) {
+                    //             this.clients[i].socket.emit("receiveCart", zaloCash[0])
+                    //             this.clients[i].socket.emit("receiveReceipt", zaloCash[1])
+                    //             this.clients[i].socket.emit("cash-status", true)
+                    //         }
+                    //     }
+                    // }
                 })
 
 
@@ -82,11 +122,50 @@ export class UserSocketGateway implements OnModuleInit {
 
             }
         })
+    } 
+
+    async zaloCash( user,total, socket: Socket) {
+        let finish:boolean = false;
+        let result = null;
+
+
+        let zaloRes = await this.zaloCreateReceipt(user, total);
+        console.log("zaloRes",zaloRes);
+
+        if(!zaloRes) return false
+        /* Bước 2: Gửi thông tin thanh toán về cho client*/
+        socket.emit("payQr", zaloRes.payUrl)
+        /* Bước 3: Kiểm tra thanh toán*/
+        let payInterval: NodeJS.Timeout | null = null;
+
+        /* Sau bao lâu thì hủy giao dịch! */
+        setTimeout(() => {
+            socket.emit("payQr", null)
+            clearInterval(payInterval)
+            finish = true;
+        }, 1000 * 60 * 2)
+
+        setInterval(async () => {
+            let payStatus = await this.zaloCheckPaid(zaloRes.orderId)
+            if(payStatus) {
+                //lưu vào database
+
+                finish = true;
+                return
+            }
+        }, 1000)
+
+        return new Promise((resolve, reject) => {
+            setInterval(() => {
+                if(finish) {
+                    resolve(result)
+                }
+            }, 1000)
+        })
     }
 
-
-
-    async zaloCreateReceipt(user, receipt,total:number) {
+    //trả về mã qr
+    async zaloCreateReceipt(user,total:number) {
         let result: {
             payUrl: string;
             orderId: string;
@@ -101,14 +180,14 @@ export class UserSocketGateway implements OnModuleInit {
     
         const orderInfo = {
             appid: config.appid,
-            apptransid: `${moment().format('YYMMDD')}_${Date.now()*Math.random()}_${receipt.id}`,
-            appuser: user.userName,
+            apptransid: `${moment().format('YYMMDD')}_${Date.now()*Math.random()}_`,
+            appuser: "userName",
             apptime: Date.now(),
             item: JSON.stringify([]),
             embeddata: JSON.stringify({
                 merchantinfo: "Clothes Shop" // key require merchantinfo
             }),
-            amount: Number(total),
+            amount: Number(total*23000),
             description: "Thanh Toán Cho Clothes Shop",
             bankcode: "zalopayapp",
             mac: ""
@@ -120,6 +199,8 @@ export class UserSocketGateway implements OnModuleInit {
     
         await axios.post(String(config.create), null, { params: orderInfo })
             .then(zaloRes => {
+                // console.log("zaloReszaloRes",zaloRes);
+                
                if(zaloRes.data.returncode == 1) {
                     result = {
                         payUrl: zaloRes.data.orderurl,
@@ -167,4 +248,6 @@ export class UserSocketGateway implements OnModuleInit {
                 return false
             });
     }
+
+
 } 
