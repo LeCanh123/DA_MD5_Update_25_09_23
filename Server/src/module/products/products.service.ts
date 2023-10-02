@@ -389,10 +389,9 @@ export class ProductsService {
       .where("id = :id", { id: createProductDto.productId })
       .execute();
     }
-    if(createProductDto.image!="undefined"){
-let findIdProduct=await this.productImageRepository.find({where:{products:{id:createProductDto.productId}}})
 
-
+    if(createProductDto.image!=undefined){
+      let findIdProduct=await this.productImageRepository.find({where:{products:{id:createProductDto.productId}}})
       let updateConfirm=await this.productImageRepository
       .createQueryBuilder()
       .update(ProductImage)
@@ -479,15 +478,23 @@ let findIdProduct=await this.productImageRepository.find({where:{products:{id:cr
       const categorys=await this.categoryRepository?.find({where:{sex:createAdminGetProductDto?.data?.type,block:"null"}});
       const categoryIds = categorys.map(category => category.id);
 
-      const products = await this.productRepository?.find({ where: { category: { id: In(categoryIds) },block:"null" },relations: ['productimage'] });
-      console.log(products);
+      const products1 = await this.productRepository?.find({ skip:Number(createAdminGetProductDto?.data?.skip),
+        take:Number(createAdminGetProductDto?.data?.take),
+        where: { category: { id: In(categoryIds) },
+        block:"null" },relations: ['productimage'] });
+      console.log(products1);
      
+      const [products, total] = await this.productRepository?.findAndCount({ skip:Number(createAdminGetProductDto?.data?.skip),
+        take:Number(createAdminGetProductDto?.data?.take),
+        where: { category: { id: In(categoryIds) },
+        block:"null" },relations: ['productimage'] });
 
       return {
         status: true,
         message: "Get Product success !",
-        data: products
-    }
+        data: products1,
+        total:total
+    } 
 
       
     } catch (error) {

@@ -10,6 +10,10 @@ import "./AdminManageProduct.css";
 import { BsGraphUpArrow } from "react-icons/bs";
 import { MdOutlineProductionQuantityLimits, MdOutlineAddCircleOutline } from "react-icons/md";
 import adminProduct from "@/apis/adminProduct";
+
+
+
+
   const initailState = {image: "",img1: "",img2: "",img3: "",img4: "",price: 0,actualPrice: 0,title: "",gender: "",category: "",};
   const AdminEdit = () => {
     const navigate = useNavigate();
