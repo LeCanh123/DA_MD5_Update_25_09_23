@@ -481,7 +481,8 @@ useEffect(() => {
 
        }}>
         {
-        userStore.cartPayQr && <QRCode  style={{position:"relative",left:"30px"}} value={userStore.cartPayQr} icon='https://cafebiz.cafebizcdn.vn/thumb_w/600/162123310254002176/2022/7/9/photo1657324993775-1657324993859181735127.jpg'/>
+        userStore.cartPayQr && <QRCode  style={{position:"relative",left:"30px"}} value={userStore.cartPayQr} 
+        icon='https://as2.ftcdn.net/v2/jpg/05/36/14/97/1000_F_536149715_1ISS1apIkiDBZgfwbYERwi1CeegLiOvd.jpg'/>
       }
           <input name='payMode' type="radio"  value={"CASH"} defaultChecked/>Cash<br></br>
           <input name='payMode' type="radio"  value={"ZALO"} />Zalo<br></br>

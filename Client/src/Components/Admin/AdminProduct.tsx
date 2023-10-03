@@ -64,18 +64,12 @@ checkAdmin();
 async function getData(e:any){
   console.log("eeeeee",e);
   
-  let getMenProductResult=await adminProduct.getProduct(localStorage.getItem("loginToken1"),{type:e,skip:0,take:import.meta.env.VITE_ITEM_PER_PAGE})
+  let getMenProductResult=await adminProduct.getProduct(localStorage.getItem("loginToken1"),
+  {type:e,skip:0,take:import.meta.env.VITE_ITEM_PER_PAGE})
   if(getMenProductResult.data?.status){
-    // toast({
-    //   title: "Success",
-    //   description: getMenProductResult.data.message,
-    //   status: "success",
-    //   duration: 2000,
-    //   isClosable: true,
-    //   position: "top",
-    // });
+
     setMen(getMenProductResult.data.data);
-    dispatch(setAdminProductTotal(getMenProductResult.data.total))
+    dispatch(setAdminProductTotal({total:getMenProductResult.data.total}))
   }else{
     toast({
       title: "Err",
@@ -89,36 +83,39 @@ async function getData(e:any){
 }
 
   //lấy sp về
-  useEffect(() => {
-    async function getMenProduct(){
-      let getMenProductResult= await adminProduct.getProduct(localStorage.getItem("loginToken1"),{type:category,skip:0,take:import.meta.env.VITE_ITEM_PER_PAGE})
-      console.log("getMenProductResult",getMenProductResult);
-      if(getMenProductResult.data?.status){
-        // toast({
-        //   title: "Success",
-        //   description: getMenProductResult.data.message,
-        //   status: "success",
-        //   duration: 2000,
-        //   isClosable: true,
-        //   position: "top",
-        // });
-        setMen(getMenProductResult.data.data);
-        dispatch(setAdminProductTotal(getMenProductResult.data.total))
-      }else{
-        toast({
-          title: "Err",
-          description: getMenProductResult.data.message,
-          status: "error",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        });
-      }
-    }
-    getMenProduct()
+  // useEffect(() => {
+  //   async function getMenProduct(){
+  //     let getMenProductResult= await adminProduct.getProduct(localStorage.getItem("loginToken1"),
+  //     {type:category,skip:0,take:import.meta.env.VITE_ITEM_PER_PAGE})
+  //     console.log("getMenProductResult",getMenProductResult);
+  //     if(getMenProductResult.data?.status){
+  //       // toast({
+  //       //   title: "Success",
+  //       //   description: getMenProductResult.data.message,
+  //       //   status: "success",
+  //       //   duration: 2000,
+  //       //   isClosable: true,
+  //       //   position: "top",
+  //       // });
+  //       setMen(getMenProductResult.data.data);
+  //       dispatch(setAdminProductTotal({total:getMenProductResult.data.total}))
+  //       console.log("getMenProductResult.data.total",getMenProductResult.data.total);
+        
+  //     }else{
+  //       toast({
+  //         title: "Err",
+  //         description: getMenProductResult.data.message,
+  //         status: "error",
+  //         duration: 2000,
+  //         isClosable: true,
+  //         position: "top",
+  //       });
+  //     }
+  //   }
+  //   getMenProduct()
 
 
-  }, []);
+  // }, []);
 
   async function handleDelete(id:any){
     let deleteProductResult=await adminProduct.deleteteProduct(localStorage.getItem("loginToken1"),id);

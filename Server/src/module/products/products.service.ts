@@ -493,7 +493,7 @@ export class ProductsService {
         status: true,
         message: "Get Product success !",
         data: products1,
-        total:total
+        total:total!=0?total:1
     } 
 
       
