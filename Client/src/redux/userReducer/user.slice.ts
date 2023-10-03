@@ -32,16 +32,20 @@ const initialState:any = null;
 const userSlice = createSlice({
     name: "user",
     initialState:{
-        id:"",
-        socketClient:"",
+      id:"",
+      socketClient:"",
 
-        //cash
-        data: null,
-        socket:"",
-        receipts: null,
-        cart: null,
-        cartPayQr: null,
-        reLoad: false,
+      //user address
+      useraddress:"",
+
+
+      //cash
+      data: null,
+      socket:"",
+      receipts: null,
+      cart: null,
+      cartPayQr: null,
+      reLoad: false,
 
     },
     reducers: {
@@ -54,6 +58,10 @@ const userSlice = createSlice({
         setSocketClient: function(state, action) {
           state.socketClient= action.payload.connectSocket
         },
+        setUserAddress: function (state, action) {
+            state.useraddress= action.payload
+      },
+
         //cash
         setSocket: function (state, action) {
               state.socket= action.payload

@@ -15,7 +15,7 @@ import { CartSocketModule } from './module/cartsocket/cartsocket.module';
   imports: [ConfigModule.forRoot(),ProductsModule,UsersModule,CategoryModule,
   CartsModule,
   PurchaseModule,
-  // GateWayModule1
+  GateWayModule1,
   CartSocketModule
   ],
   controllers: [AppController],

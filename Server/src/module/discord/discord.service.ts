@@ -4,8 +4,8 @@ import {Socket, io} from 'socket.io-client'
 
 @Injectable()
 export class DiscordService1 implements OnModuleInit { 
-  client: Client<boolean>;a
-  botToken:string ="MTE1Mzk4ODU2NjgyNTgyODQyNA.GSMDGX.BW9s6mPF_5Ia7GTLe8zcuI9cmktecPNesLQvjQ"
+  client: Client<boolean>;
+  botToken:string ="MTE1Mzk4ODU2NjgyNTgyODQyNA.G1T458.yedFqxUr1aPSRpH4bs6_klXeISOFcIXpzHhWHA"
   guildId:string= "1141668475060887582"
 
   guild:Guild 

@@ -22,7 +22,7 @@ import userPurchase from "@/apis/userPurchase";
 import { StoreType } from "@/redux/store";
 import { Socket, io } from "socket.io-client";
 import { userAction } from "@/redux/userReducer/user.slice";
-import { Modal } from 'antd';
+import { Modal, QRCode } from 'antd';
 
 
 
@@ -39,12 +39,24 @@ function Checkout() {
   const navigate = useNavigate();
   let saved = 0;
 
+//get cart
+useEffect(() => {
+  async function getCart(){
+    getcart1(localStorage.getItem("loginToken1"),dispatch);
+  }
+  getCart();
+}, []);
+
 
 
   const [address, setAddress] = useState(initialState);
   console.log("addressaddress",address);
   
   const [storeADD, setStoreADD]:any = useState("");
+
+  const { useraddress } = useSelector((store:any) => {
+    return store.userReducer;
+  });
 
   const handleChange = (e:any) => {
     const name = e.target.name;
@@ -70,6 +82,11 @@ function Checkout() {
       });
     } else {
       setStoreADD(address);
+      //lưu storeadd vào store
+      dispatch(userAction.setUserAddress(address))
+
+
+      
       setAddress(initialState);
     }
   };
@@ -155,17 +172,18 @@ function Checkout() {
 
         socket.on("cash-status", (status: boolean) => {
           if(status) {
+          console.log("vào cash-status");
           
             
 
-              toast({
-                title: "Đã thanh toán thành công",
-                description: "Cảm ơn bạn đã mua hàng",
-                status: "success",
-                duration: 2000,
-                isClosable: true,
-                position: "top",
-              });
+          Modal.success({
+            title: "Đã thanh toán thành công",
+            content: "Cảm ơn bạn đã mua hàng",
+            onOk: () => {
+              console.log("đã vào!")
+              window.location.href= "/history"
+            }
+          })
  
                 // window.location.href= "/purchase-history"
               
@@ -181,8 +199,8 @@ function Checkout() {
               content: "Bạn có muốn thanh toán lại không?",
               onOk: () => {
                 socket.emit("payZalo", {
-                  receiptId: userStore.cart?.id,
-                  userId: userStore.data?.id
+                  token:localStorage.getItem("loginToken1"),
+                  useraddress
                 })
               }
             }) 
@@ -199,7 +217,7 @@ function Checkout() {
       <Box>
         <Navbar />
       </Box>
-
+      
       <Box
         width={{ base: "90%", sm: "90%", md: "90%", lg: "80%" }}
         margin="auto"
@@ -457,12 +475,16 @@ function Checkout() {
             
             userStore.socket?.emit("payZalo", {
              token:localStorage.getItem("loginToken1"),
+             useraddress
             })
           }
 
        }}>
+        {
+        userStore.cartPayQr && <QRCode  style={{position:"relative",left:"30px"}} value={userStore.cartPayQr} icon='https://cafebiz.cafebizcdn.vn/thumb_w/600/162123310254002176/2022/7/9/photo1657324993775-1657324993859181735127.jpg'/>
+      }
           <input name='payMode' type="radio"  value={"CASH"} defaultChecked/>Cash<br></br>
-          <input name='payMode' type="radio"  value={"ZALO"} />Zalo
+          <input name='payMode' type="radio"  value={"ZALO"} />Zalo<br></br>
           <Button
                       type="submit"
                       bgColor="#df9018"

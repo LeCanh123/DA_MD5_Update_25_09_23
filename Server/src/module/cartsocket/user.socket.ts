@@ -16,7 +16,7 @@ import { Cart } from "../carts/entities/cart.entity";
 import { Bag } from "../bags/entities/bag.entity";
 import { User } from "../users/entities/user.entity";
 import { Address } from "nodemailer/lib/mailer";
-
+import { PurchaseService } from "../purchase/purchase.service";
 
 
 interface ClientType {
@@ -42,6 +42,8 @@ export class UserSocketGateway implements OnModuleInit {
     
         @Inject('USER_REPOSITORY')
         private userRepository: Repository<User>,
+
+        private readonly purchaseService: PurchaseService
     ) { }
 
     onModuleInit() {
@@ -97,24 +99,36 @@ export class UserSocketGateway implements OnModuleInit {
                         }else{
                             //tạo đơn zalo
                             let zaloCash = await this.zaloCash(user, Number(sumTotalCart),socket);
-                        }
+                            console.log("zalocash",zaloCash);
+                            
+                            if(zaloCash) {
+                            //lưu vào database
+                            console.log("data",data);
+                            this.purchaseService.addOrder({
+                                token:data.token,
+                                data:{
+                                   ...data.useraddress 
+                                }
+                            })
+
+                                for (let i in this.clients) {
+                                    if(this.clients[i].user.id == user.id) {
+                                        this.clients[i].socket.emit("receiveCart", zaloCash[0])
+                                        this.clients[i].socket.emit("receiveReceipt", zaloCash[1])
+                                        this.clients[i].socket.emit("cash-status", true)
+                                    }
+                                }
+                            }
+
+                        } 
      
                 
-                        }
+                        } 
                     }
                     else{
                         //emit cho người dùng chưa đăng nhập
                     }
-                    // let zaloCash = await this.zaloCreateReceipt(data.receiptId, user, Number(total));
-                    // if(zaloCash) {
-                    //     for (let i in this.clients) {
-                    //         if(this.clients[i].user.id == user.id) {
-                    //             this.clients[i].socket.emit("receiveCart", zaloCash[0])
-                    //             this.clients[i].socket.emit("receiveReceipt", zaloCash[1])
-                    //             this.clients[i].socket.emit("cash-status", true)
-                    //         }
-                    //     }
-                    // }
+   
                 })
 
 
@@ -145,20 +159,27 @@ export class UserSocketGateway implements OnModuleInit {
             finish = true;
         }, 1000 * 60 * 2)
 
-        setInterval(async () => {
-            let payStatus = await this.zaloCheckPaid(zaloRes.orderId)
-            if(payStatus) {
-                //lưu vào database
+        let intervalId = setInterval(async () => {
+            let payStatus =
+            await this.zaloCheckPaid(zaloRes.orderId);
+            // payStatus = true;
+            // console.log("payStatus", payStatus);
+            if (payStatus) {
+                // lưu vào database 
 
-                finish = true;
-                return
+                finish = true; 
+                clearInterval(intervalId); // Dừng vòng lặp setInterval
+                return;
             }
-        }, 1000)
+        }, 1000);
 
-        return new Promise((resolve, reject) => {
-            setInterval(() => {
+        return new Promise((resolve, reject) => { 
+            let intervalId = setInterval(() => { 
+                console.log("finish",finish);
+                
                 if(finish) {
-                    resolve(result)
+                    resolve("result") 
+                    clearInterval(intervalId); // Dừng vòng lặp setInterval
                 }
             }, 1000)
         })
@@ -191,7 +212,7 @@ export class UserSocketGateway implements OnModuleInit {
             description: "Thanh Toán Cho Clothes Shop",
             bankcode: "zalopayapp",
             mac: ""
-        };
+        }; 
     
         const data = config.appid + "|" + orderInfo.apptransid + "|" + orderInfo.appuser + "|" + 
         orderInfo.amount + "|" + orderInfo.apptime + "|" + orderInfo.embeddata + "|" + orderInfo.item;
